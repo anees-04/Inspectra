@@ -1,0 +1,1122 @@
+// ========================================
+// SECURITY MISCONFIGURATIONS DATABASE
+// Category 5: Cryptography & Data Protection
+// Total: 100 Misconfigurations
+// ========================================
+
+const category5_CryptographyDataProtection = [
+  // Encryption Issues (1-25)
+  {
+    id: 401,
+    category: "Encryption",
+    title: "Sensitive Data Stored Unencrypted",
+    description: "Passwords, credit cards, or PII stored in plain text",
+    severity: "critical",
+    cwe: "CWE-311",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Encrypt sensitive data at rest using AES-256 or stronger",
+    checkFunction: "checkUnencryptedStorage"
+  },
+  {
+    id: 402,
+    category: "Encryption",
+    title: "Weak Encryption Algorithm",
+    description: "Using DES, 3DES, RC4, or other weak algorithms",
+    severity: "high",
+    cwe: "CWE-327",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use AES-256-GCM or ChaCha20-Poly1305 for encryption",
+    checkFunction: "checkWeakEncryption"
+  },
+  {
+    id: 403,
+    category: "Encryption",
+    title: "ECB Mode Used",
+    description: "Electronic Codebook (ECB) mode used for block cipher",
+    severity: "high",
+    cwe: "CWE-327",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use GCM, CBC, or CTR mode with proper IV",
+    checkFunction: "checkECBMode"
+  },
+  {
+    id: 404,
+    category: "Encryption",
+    title: "No Encryption IV/Nonce",
+    description: "Encryption without initialization vector or nonce",
+    severity: "high",
+    cwe: "CWE-329",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Always use random IV/nonce for each encryption",
+    checkFunction: "checkMissingIV"
+  },
+  {
+    id: 405,
+    category: "Encryption",
+    title: "Static/Reused IV",
+    description: "Same IV used for multiple encryptions",
+    severity: "high",
+    cwe: "CWE-329",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Generate unique random IV for each encryption operation",
+    checkFunction: "checkStaticIV"
+  },
+  {
+    id: 406,
+    category: "Encryption",
+    title: "Encryption Without Authentication",
+    description: "Encryption mode doesn't provide authentication (CBC without HMAC)",
+    severity: "high",
+    cwe: "CWE-353",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use authenticated encryption (AES-GCM, ChaCha20-Poly1305)",
+    checkFunction: "checkUnauthenticatedEncryption"
+  },
+  {
+    id: 407,
+    category: "Encryption",
+    title: "Hardcoded Encryption Key",
+    description: "Encryption keys hardcoded in source code",
+    severity: "critical",
+    cwe: "CWE-321",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Store keys in secure key management system (KMS)",
+    checkFunction: "checkHardcodedKey"
+  },
+  {
+    id: 408,
+    category: "Encryption",
+    title: "Weak Encryption Key Size",
+    description: "Encryption key smaller than 128 bits",
+    severity: "high",
+    cwe: "CWE-326",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use minimum 128-bit keys, prefer 256-bit",
+    checkFunction: "checkWeakKeySize"
+  },
+  {
+    id: 409,
+    category: "Encryption",
+    title: "Encryption Key Derivation Weak",
+    description: "Poor key derivation from password",
+    severity: "high",
+    cwe: "CWE-326",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use PBKDF2, bcrypt, or Argon2 for key derivation",
+    checkFunction: "checkWeakKeyDerivation"
+  },
+  {
+    id: 410,
+    category: "Encryption",
+    title: "No Key Rotation Policy",
+    description: "Encryption keys never rotated",
+    severity: "medium",
+    cwe: "CWE-324",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Implement regular key rotation schedule",
+    checkFunction: "checkKeyRotation"
+  },
+  {
+    id: 411,
+    category: "Encryption",
+    title: "Encryption Key in Memory",
+    description: "Keys remain in memory after use",
+    severity: "medium",
+    cwe: "CWE-316",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Zero out keys from memory after use",
+    checkFunction: "checkKeyInMemory"
+  },
+  {
+    id: 412,
+    category: "Encryption",
+    title: "Encryption Key in Logs",
+    description: "Encryption keys logged or exposed",
+    severity: "critical",
+    cwe: "CWE-532",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Never log encryption keys or sensitive key material",
+    checkFunction: "checkKeyInLogs"
+  },
+  {
+    id: 413,
+    category: "Encryption",
+    title: "Encryption Key Backup Insecure",
+    description: "Key backups not properly protected",
+    severity: "high",
+    cwe: "CWE-320",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Encrypt key backups, store in secure location",
+    checkFunction: "checkKeyBackup"
+  },
+  {
+    id: 414,
+    category: "Encryption",
+    title: "Custom Crypto Implementation",
+    description: "Using custom/homemade cryptographic algorithms",
+    severity: "critical",
+    cwe: "CWE-327",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use established cryptographic libraries, never roll your own",
+    checkFunction: "checkCustomCrypto"
+  },
+  {
+    id: 415,
+    category: "Encryption",
+    title: "Outdated Crypto Library",
+    description: "Using outdated cryptographic library with known vulnerabilities",
+    severity: "high",
+    cwe: "CWE-327",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Update crypto libraries regularly, monitor for vulnerabilities",
+    checkFunction: "checkOutdatedCryptoLib"
+  },
+  {
+    id: 416,
+    category: "Encryption",
+    title: "Padding Oracle Vulnerability",
+    description: "CBC mode vulnerable to padding oracle attacks",
+    severity: "high",
+    cwe: "CWE-649",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use authenticated encryption modes (GCM)",
+    checkFunction: "checkPaddingOracle"
+  },
+  {
+    id: 417,
+    category: "Encryption",
+    title: "Encryption Not Used for Transit",
+    description: "Sensitive data transmitted without encryption",
+    severity: "critical",
+    cwe: "CWE-319",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use TLS 1.2+ for all data in transit",
+    checkFunction: "checkNoTransitEncryption"
+  },
+  {
+    id: 418,
+    category: "Encryption",
+    title: "Database Encryption Disabled",
+    description: "Database storage not encrypted at rest",
+    severity: "high",
+    cwe: "CWE-311",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Enable transparent data encryption (TDE) for databases",
+    checkFunction: "checkDatabaseEncryption"
+  },
+  {
+    id: 419,
+    category: "Encryption",
+    title: "Backup Files Not Encrypted",
+    description: "Backup files stored without encryption",
+    severity: "high",
+    cwe: "CWE-311",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Encrypt all backup files before storage",
+    checkFunction: "checkBackupEncryption"
+  },
+  {
+    id: 420,
+    category: "Encryption",
+    title: "Log Files Not Encrypted",
+    description: "Sensitive logs stored without encryption",
+    severity: "medium",
+    cwe: "CWE-311",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Encrypt log files containing sensitive information",
+    checkFunction: "checkLogEncryption"
+  },
+  {
+    id: 421,
+    category: "Encryption",
+    title: "Email Not Encrypted",
+    description: "Sensitive data sent via unencrypted email",
+    severity: "high",
+    cwe: "CWE-319",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use S/MIME or PGP for sensitive email, or avoid email entirely",
+    checkFunction: "checkEmailEncryption"
+  },
+  {
+    id: 422,
+    category: "Encryption",
+    title: "File Upload Storage Unencrypted",
+    description: "User uploaded files not encrypted at rest",
+    severity: "medium",
+    cwe: "CWE-311",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Encrypt uploaded files, especially user-submitted sensitive data",
+    checkFunction: "checkUploadEncryption"
+  },
+  {
+    id: 423,
+    category: "Encryption",
+    title: "Temporary File Encryption Missing",
+    description: "Temporary files with sensitive data not encrypted",
+    severity: "medium",
+    cwe: "CWE-311",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Encrypt temporary files, delete securely after use",
+    checkFunction: "checkTempFileEncryption"
+  },
+  {
+    id: 424,
+    category: "Encryption",
+    title: "Memory Dumps Contain Keys",
+    description: "Core dumps or crash reports contain encryption keys",
+    severity: "high",
+    cwe: "CWE-316",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Disable core dumps in production, scrub sensitive data",
+    checkFunction: "checkMemoryDumps"
+  },
+  {
+    id: 425,
+    category: "Encryption",
+    title: "Encryption Key Split Not Implemented",
+    description: "No key splitting for high-value keys",
+    severity: "low",
+    cwe: "CWE-320",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Consider key splitting (Shamir's Secret Sharing) for critical keys",
+    checkFunction: "checkKeySplitting"
+  },
+
+  // Hashing Issues (26-45)
+  {
+    id: 426,
+    category: "Hashing",
+    title: "MD5 Used for Security",
+    description: "MD5 hash used for passwords or integrity",
+    severity: "critical",
+    cwe: "CWE-327",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use bcrypt, Argon2, or PBKDF2 for passwords; SHA-256+ for integrity",
+    checkFunction: "checkMD5Usage"
+  },
+  {
+    id: 427,
+    category: "Hashing",
+    title: "SHA-1 Used for Security",
+    description: "SHA-1 hash used despite being broken",
+    severity: "high",
+    cwe: "CWE-327",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use SHA-256, SHA-3, or stronger hash functions",
+    checkFunction: "checkSHA1Usage"
+  },
+  {
+    id: 428,
+    category: "Hashing",
+    title: "Fast Hash for Passwords",
+    description: "SHA-256 or similar fast hash used for passwords",
+    severity: "critical",
+    cwe: "CWE-916",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use bcrypt (cost 12+), Argon2id, or PBKDF2 (100k+ iterations)",
+    checkFunction: "checkFastHashPasswords"
+  },
+  {
+    id: 429,
+    category: "Hashing",
+    title: "No Salt for Password Hash",
+    description: "Password hashes not salted",
+    severity: "critical",
+    cwe: "CWE-759",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use unique random salt per password (bcrypt/Argon2 do this automatically)",
+    checkFunction: "checkNoSalt"
+  },
+  {
+    id: 430,
+    category: "Hashing",
+    title: "Static/Shared Salt",
+    description: "Same salt used for all passwords",
+    severity: "critical",
+    cwe: "CWE-760",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Generate unique random salt for each password",
+    checkFunction: "checkStaticSalt"
+  },
+  {
+    id: 431,
+    category: "Hashing",
+    title: "Short Salt Length",
+    description: "Salt shorter than 128 bits",
+    severity: "high",
+    cwe: "CWE-326",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use minimum 128-bit (16 byte) random salt",
+    checkFunction: "checkShortSalt"
+  },
+  {
+    id: 432,
+    category: "Hashing",
+    title: "Low PBKDF2 Iteration Count",
+    description: "PBKDF2 iterations less than 100,000",
+    severity: "high",
+    cwe: "CWE-916",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use minimum 100,000 iterations for PBKDF2 (NIST recommendation)",
+    checkFunction: "checkLowPBKDF2Iterations"
+  },
+  {
+    id: 433,
+    category: "Hashing",
+    title: "Low bcrypt Cost Factor",
+    description: "bcrypt work factor less than 10",
+    severity: "high",
+    cwe: "CWE-916",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use bcrypt cost factor of 12 or higher",
+    checkFunction: "checkLowBcryptCost"
+  },
+  {
+    id: 434,
+    category: "Hashing",
+    title: "Weak Argon2 Parameters",
+    description: "Argon2 memory or iteration parameters too low",
+    severity: "medium",
+    cwe: "CWE-916",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use Argon2id with memory cost 64MB+, time cost 3+",
+    checkFunction: "checkWeakArgon2"
+  },
+  {
+    id: 435,
+    category: "Hashing",
+    title: "Hash Without HMAC for Integrity",
+    description: "Simple hash used for message integrity",
+    severity: "medium",
+    cwe: "CWE-353",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use HMAC for authenticated integrity checks",
+    checkFunction: "checkHashWithoutHMAC"
+  },
+  {
+    id: 436,
+    category: "Hashing",
+    title: "Predictable Hash Input",
+    description: "Hash collision possible with predictable inputs",
+    severity: "medium",
+    cwe: "CWE-328",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Include random element in hash input",
+    checkFunction: "checkPredictableHashInput"
+  },
+  {
+    id: 437,
+    category: "Hashing",
+    title: "Hash Length Extension Attack",
+    description: "Vulnerable to hash length extension (SHA-256 for MAC)",
+    severity: "medium",
+    cwe: "CWE-328",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use HMAC or SHA-3 instead of raw SHA-2 for MAC",
+    checkFunction: "checkHashLengthExtension"
+  },
+  {
+    id: 438,
+    category: "Hashing",
+    title: "CRC Used for Security",
+    description: "CRC32 or similar non-cryptographic hash for security",
+    severity: "high",
+    cwe: "CWE-328",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use cryptographic hash functions (SHA-256+) for security",
+    checkFunction: "checkCRCForSecurity"
+  },
+  {
+    id: 439,
+    category: "Hashing",
+    title: "Hash Collision Not Handled",
+    description: "No handling for hash collisions",
+    severity: "low",
+    cwe: "CWE-328",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Implement collision detection and handling",
+    checkFunction: "checkHashCollision"
+  },
+  {
+    id: 440,
+    category: "Hashing",
+    title: "Truncated Hash Output",
+    description: "Hash output truncated reducing security",
+    severity: "medium",
+    cwe: "CWE-328",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use full hash output or proper truncation method",
+    checkFunction: "checkTruncatedHash"
+  },
+  {
+    id: 441,
+    category: "Hashing",
+    title: "Hash Algorithm Agility Missing",
+    description: "No ability to upgrade hash algorithm",
+    severity: "low",
+    cwe: "CWE-327",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Store hash algorithm version, support migration",
+    checkFunction: "checkHashAgility"
+  },
+  {
+    id: 442,
+    category: "Hashing",
+    title: "Client-Side Password Hashing Only",
+    description: "Password hashed only in browser",
+    severity: "high",
+    cwe: "CWE-602",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Always hash passwords server-side, client-side is supplementary",
+    checkFunction: "checkClientSideHashOnly"
+  },
+  {
+    id: 443,
+    category: "Hashing",
+    title: "Rainbow Table Attack Possible",
+    description: "No salt makes rainbow table attacks feasible",
+    severity: "critical",
+    cwe: "CWE-759",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use unique salts per password",
+    checkFunction: "checkRainbowTable"
+  },
+  {
+    id: 444,
+    category: "Hashing",
+    title: "Hash Used as Encryption",
+    description: "Hash function misused for encryption",
+    severity: "high",
+    cwe: "CWE-327",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use proper encryption algorithms, not hash functions",
+    checkFunction: "checkHashAsEncryption"
+  },
+  {
+    id: 445,
+    category: "Hashing",
+    title: "File Integrity Hash Missing",
+    description: "Downloaded files not verified with hash",
+    severity: "medium",
+    cwe: "CWE-353",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Provide and verify SHA-256 hashes for downloads",
+    checkFunction: "checkFileIntegrityHash"
+  },
+
+  // Random Number Generation (46-60)
+  {
+    id: 446,
+    category: "Random Numbers",
+    title: "Weak Random Number Generator",
+    description: "Using non-cryptographic RNG for security",
+    severity: "high",
+    cwe: "CWE-338",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use cryptographically secure RNG (CSPRNG)",
+    checkFunction: "checkWeakRNG"
+  },
+  {
+    id: 447,
+    category: "Random Numbers",
+    title: "Math.random() for Security",
+    description: "JavaScript Math.random() used for security tokens",
+    severity: "high",
+    cwe: "CWE-338",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use crypto.getRandomValues() or crypto.randomBytes()",
+    checkFunction: "checkMathRandom"
+  },
+  {
+    id: 448,
+    category: "Random Numbers",
+    title: "rand() for Security",
+    description: "C/PHP rand() used for security purposes",
+    severity: "high",
+    cwe: "CWE-338",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use /dev/urandom, random_bytes(), or CSPRNG library",
+    checkFunction: "checkRandFunction"
+  },
+  {
+    id: 449,
+    category: "Random Numbers",
+    title: "Predictable Random Seed",
+    description: "RNG seeded with predictable value (timestamp)",
+    severity: "high",
+    cwe: "CWE-337",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use system entropy source, don't manually seed CSPRNG",
+    checkFunction: "checkPredictableSeed"
+  },
+  {
+    id: 450,
+    category: "Random Numbers",
+    title: "Insufficient Random Entropy",
+    description: "Not enough entropy for random values",
+    severity: "medium",
+    cwe: "CWE-331",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Generate sufficient random bytes (16-32 for tokens)",
+    checkFunction: "checkInsufficientEntropy"
+  },
+  {
+    id: 451,
+    category: "Random Numbers",
+    title: "Sequential Token Generation",
+    description: "Tokens generated sequentially or predictably",
+    severity: "critical",
+    cwe: "CWE-330",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use cryptographically random tokens (128+ bits)",
+    checkFunction: "checkSequentialTokens"
+  },
+  {
+    id: 452,
+    category: "Random Numbers",
+    title: "UUID v1 for Security",
+    description: "Using time-based UUID v1 for security tokens",
+    severity: "medium",
+    cwe: "CWE-330",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use UUID v4 (random) for security purposes",
+    checkFunction: "checkUUIDv1"
+  },
+  {
+    id: 453,
+    category: "Random Numbers",
+    title: "Timestamp as Nonce",
+    description: "Using timestamp as cryptographic nonce",
+    severity: "high",
+    cwe: "CWE-330",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Generate cryptographically random nonces",
+    checkFunction: "checkTimestampNonce"
+  },
+  {
+    id: 454,
+    category: "Random Numbers",
+    title: "Weak Session ID Generation",
+    description: "Session IDs not cryptographically random",
+    severity: "critical",
+    cwe: "CWE-330",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Generate session IDs with 128+ bits of CSPRNG entropy",
+    checkFunction: "checkWeakSessionIDGen"
+  },
+  {
+    id: 455,
+    category: "Random Numbers",
+    title: "Predictable CSRF Token",
+    description: "CSRF tokens generated predictably",
+    severity: "high",
+    cwe: "CWE-330",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Use cryptographically random CSRF tokens",
+    checkFunction: "checkPredictableCSRFToken"
+  },
+  {
+    id: 456,
+    category: "Random Numbers",
+    title: "Weak Password Reset Token",
+    description: "Password reset tokens predictable",
+    severity: "critical",
+    cwe: "CWE-330",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Generate reset tokens with 256+ bits of entropy",
+    checkFunction: "checkWeakResetToken"
+  },
+  {
+    id: 457,
+    category: "Random Numbers",
+    title: "Random Number Reuse",
+    description: "Same random value used multiple times",
+    severity: "medium",
+    cwe: "CWE-330",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Generate new random value for each use",
+    checkFunction: "checkRandomReuse"
+  },
+  {
+    id: 458,
+    category: "Random Numbers",
+    title: "Insufficient Random for Captcha",
+    description: "Captcha challenges predictable",
+    severity: "medium",
+    cwe: "CWE-330",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Use strong randomness for captcha generation",
+    checkFunction: "checkCaptchaRandom"
+  },
+  {
+    id: 459,
+    category: "Random Numbers",
+    title: "Predictable File Upload Names",
+    description: "Upload file names predictable allowing guessing",
+    severity: "low",
+    cwe: "CWE-330",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Use cryptographically random file names",
+    checkFunction: "checkPredictableUploadNames"
+  },
+  {
+    id: 460,
+    category: "Random Numbers",
+    title: "Weak OTP Generation",
+    description: "One-time passwords not sufficiently random",
+    severity: "high",
+    cwe: "CWE-330",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Use TOTP/HOTP standards with proper entropy",
+    checkFunction: "checkWeakOTP"
+  },
+
+  // Key Management (61-80)
+  {
+    id: 461,
+    category: "Key Management",
+    title: "No Key Management System",
+    description: "Keys managed manually without proper system",
+    severity: "high",
+    cwe: "CWE-320",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Implement or use KMS (AWS KMS, Azure Key Vault, HashiCorp Vault)",
+    checkFunction: "checkNoKMS"
+  },
+  {
+    id: 462,
+    category: "Key Management",
+    title: "Keys in Source Control",
+    description: "Encryption keys committed to Git",
+    severity: "critical",
+    cwe: "CWE-321",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Remove keys from repo, use secrets management, rotate compromised keys",
+    checkFunction: "checkKeysInGit"
+  },
+  {
+    id: 463,
+    category: "Key Management",
+    title: "Keys in Configuration Files",
+    description: "Keys in plain text config files",
+    severity: "critical",
+    cwe: "CWE-13",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use environment variables or secrets management",
+    checkFunction: "checkKeysInConfig"
+  },
+  {
+    id: 464,
+    category: "Key Management",
+    title: "Keys in Environment Variables",
+    description: "Sensitive keys in environment variables visible in process list",
+    severity: "medium",
+    cwe: "CWE-526",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use KMS or secret files with proper permissions",
+    checkFunction: "checkKeysInEnv"
+  },
+  {
+    id: 465,
+    category: "Key Management",
+    title: "Shared Encryption Keys",
+    description: "Same key used across multiple environments",
+    severity: "high",
+    cwe: "CWE-321",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use separate keys per environment and purpose",
+    checkFunction: "checkSharedKeys"
+  },
+  {
+    id: 466,
+    category: "Key Management",
+    title: "No Key Access Logging",
+    description: "Key access not logged or audited",
+    severity: "medium",
+    cwe: "CWE-778",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Log all key access and usage",
+    checkFunction: "checkKeyAccessLogging"
+  },
+  {
+    id: 467,
+    category: "Key Management",
+    title: "No Key Expiration",
+    description: "Encryption keys don't expire",
+    severity: "medium",
+    cwe: "CWE-324",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Implement key expiration and rotation schedule",
+    checkFunction: "checkKeyExpiration"
+  },
+  {
+    id: 468,
+    category: "Key Management",
+    title: "No Key Revocation Mechanism",
+    description: "No way to revoke compromised keys",
+    severity: "high",
+    cwe: "CWE-324",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Implement key revocation and re-encryption process",
+    checkFunction: "checkKeyRevocation"
+  },
+  {
+    id: 469,
+    category: "Key Management",
+    title: "Master Key Not Protected",
+    description: "Key encryption key (KEK) not properly secured",
+    severity: "critical",
+    cwe: "CWE-320",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use hardware security module (HSM) for master keys",
+    checkFunction: "checkMasterKeyProtection"
+  },
+  {
+    id: 470,
+    category: "Key Management",
+    title: "No Key Versioning",
+    description: "Can't identify which key version encrypted data",
+    severity: "medium",
+    cwe: "CWE-320",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Include key version identifier with encrypted data",
+    checkFunction: "checkKeyVersioning"
+  },
+  {
+    id: 471,
+    category: "Key Management",
+    title: "Keys Not Separated by Purpose",
+    description: "Same key used for different purposes",
+    severity: "medium",
+    cwe: "CWE-320",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use separate keys for encryption, signing, authentication",
+    checkFunction: "checkKeySeparation"
+  },
+  {
+    id: 472,
+    category: "Key Management",
+    title: "No Key Ceremony for Critical Keys",
+    description: "High-value keys generated without proper ceremony",
+    severity: "low",
+    cwe: "CWE-320",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use formal key ceremony for CA roots and other critical keys",
+    checkFunction: "checkKeyCeremony"
+  },
+  {
+    id: 473,
+    category: "Key Management",
+    title: "Key Material in Docker Images",
+    description: "Secrets baked into container images",
+    severity: "critical",
+    cwe: "CWE-526",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use secrets management, mount secrets at runtime",
+    checkFunction: "checkKeysInDocker"
+  },
+  {
+    id: 474,
+    category: "Key Management",
+    title: "Default/Demo Keys in Production",
+    description: "Example or default keys not changed",
+    severity: "critical",
+    cwe: "CWE-321",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Generate unique keys for production, never use defaults",
+    checkFunction: "checkDefaultKeys"
+  },
+  {
+    id: 475,
+    category: "Key Management",
+    title: "Key Storage Permissions Too Open",
+    description: "Key files readable by unauthorized users",
+    severity: "high",
+    cwe: "CWE-732",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Set restrictive permissions (0600) on key files",
+    checkFunction: "checkKeyFilePermissions"
+  },
+  {
+    id: 476,
+    category: "Key Management",
+    title: "API Keys Transmitted Insecurely",
+    description: "API keys sent over HTTP or in URLs",
+    severity: "high",
+    cwe: "CWE-319",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use HTTPS, send keys in Authorization header",
+    checkFunction: "checkAPIKeyTransmission"
+  },
+  {
+    id: 477,
+    category: "Key Management",
+    title: "Private Key Not Password Protected",
+    description: "Private keys stored without passphrase",
+    severity: "high",
+    cwe: "CWE-311",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Encrypt private keys with strong passphrase or use HSM",
+    checkFunction: "checkPrivateKeyPassphrase"
+  },
+  {
+    id: 478,
+    category: "Key Management",
+    title: "Key Escrow Without Controls",
+    description: "Key escrow system lacks proper controls",
+    severity: "medium",
+    cwe: "CWE-320",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Implement multi-party control for key escrow access",
+    checkFunction: "checkKeyEscrow"
+  },
+  {
+    id: 479,
+    category: "Key Management",
+    title: "No Key Destruction Policy",
+    description: "No secure process for destroying old keys",
+    severity: "low",
+    cwe: "CWE-324",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Implement secure key destruction after retention period",
+    checkFunction: "checkKeyDestruction"
+  },
+  {
+    id: 480,
+    category: "Key Management",
+    title: "Key Generation Uses Weak RNG",
+    description: "Keys generated with non-cryptographic RNG",
+    severity: "critical",
+    cwe: "CWE-338",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use CSPRNG for all key generation",
+    checkFunction: "checkKeyGenerationRNG"
+  },
+
+  // Data Protection (81-100)
+  {
+    id: 481,
+    category: "Data Protection",
+    title: "PII Not Identified",
+    description: "Personally identifiable information not catalogued",
+    severity: "medium",
+    cwe: "CWE-359",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Create data inventory, classify sensitive data",
+    checkFunction: "checkPIIIdentification"
+  },
+  {
+    id: 482,
+    category: "Data Protection",
+    title: "PII Not Encrypted",
+    description: "PII stored without encryption",
+    severity: "high",
+    cwe: "CWE-311",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Encrypt all PII at rest",
+    checkFunction: "checkPIIEncryption"
+  },
+  {
+    id: 483,
+    category: "Data Protection",
+    title: "Credit Card Data Stored",
+    description: "Full credit card numbers stored (PCI DSS violation)",
+    severity: "critical",
+    cwe: "CWE-312",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use tokenization, never store full PAN",
+    checkFunction: "checkCreditCardStorage"
+  },
+  {
+    id: 484,
+    category: "Data Protection",
+    title: "CVV/CVC Stored",
+    description: "Card security codes stored (PCI DSS violation)",
+    severity: "critical",
+    cwe: "CWE-312",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Never store CVV/CVC, even encrypted",
+    checkFunction: "checkCVVStorage"
+  },
+  {
+    id: 485,
+    category: "Data Protection",
+    title: "Social Security Numbers Unmasked",
+    description: "SSN displayed in full",
+    severity: "high",
+    cwe: "CWE-359",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Mask SSN, show only last 4 digits",
+    checkFunction: "checkSSNMasking"
+  },
+  {
+    id: 486,
+    category: "Data Protection",
+    title: "No Data Minimization",
+    description: "Collecting more data than necessary",
+    severity: "medium",
+    cwe: "CWE-213",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Collect only necessary data (GDPR principle)",
+    checkFunction: "checkDataMinimization"
+  },
+  {
+    id: 487,
+    category: "Data Protection",
+    title: "No Data Retention Policy",
+    description: "Data kept indefinitely",
+    severity: "medium",
+    cwe: "CWE-404",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Implement data retention and deletion policy",
+    checkFunction: "checkDataRetention"
+  },
+  {
+    id: 488,
+    category: "Data Protection",
+    title: "No Secure Data Deletion",
+    description: "Deleted data recoverable",
+    severity: "medium",
+    cwe: "CWE-226",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Overwrite data securely before deletion",
+    checkFunction: "checkSecureDeletion"
+  },
+  {
+    id: 489,
+    category: "Data Protection",
+    title: "Data Anonymization Reversible",
+    description: "Anonymized data can be de-anonymized",
+    severity: "high",
+    cwe: "CWE-359",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use proper anonymization techniques, test reversibility",
+    checkFunction: "checkAnonymization"
+  },
+  {
+    id: 490,
+    category: "Data Protection",
+    title: "Data Pseudonymization Weak",
+    description: "Pseudonymization method easily reversed",
+    severity: "medium",
+    cwe: "CWE-327",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use strong cryptographic pseudonymization",
+    checkFunction: "checkPseudonymization"
+  },
+  {
+    id: 491,
+    category: "Data Protection",
+    title: "No Data Masking",
+    description: "Sensitive data displayed in full to unauthorized users",
+    severity: "medium",
+    cwe: "CWE-200",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Implement data masking for sensitive fields",
+    checkFunction: "checkDataMasking"
+  },
+  {
+    id: 492,
+    category: "Data Protection",
+    title: "Test Data Contains Real PII",
+    description: "Production data used in test environments",
+    severity: "high",
+    cwe: "CWE-359",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use synthetic data or anonymize production data for testing",
+    checkFunction: "checkTestDataPII"
+  },
+  {
+    id: 493,
+    category: "Data Protection",
+    title: "No Data Classification",
+    description: "Data not classified by sensitivity",
+    severity: "medium",
+    cwe: "CWE-1059",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Implement data classification scheme (public, internal, confidential, secret)",
+    checkFunction: "checkDataClassification"
+  },
+  {
+    id: 494,
+    category: "Data Protection",
+    title: "No Data Loss Prevention",
+    description: "No DLP system to prevent data exfiltration",
+    severity: "medium",
+    cwe: "CWE-200",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Implement DLP controls for sensitive data",
+    checkFunction: "checkDLP"
+  },
+  {
+    id: 495,
+    category: "Data Protection",
+    title: "Clipboard Data Not Protected",
+    description: "Sensitive data copied to clipboard without protection",
+    severity: "low",
+    cwe: "CWE-200",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Clear clipboard after sensitive operations, use secure clipboard",
+    checkFunction: "checkClipboardProtection"
+  },
+  {
+    id: 496,
+    category: "Data Protection",
+    title: "Screenshot Protection Missing",
+    description: "Screenshots capture sensitive data",
+    severity: "low",
+    cwe: "CWE-200",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Implement screenshot protection for sensitive views (mobile apps)",
+    checkFunction: "checkScreenshotProtection"
+  },
+  {
+    id: 497,
+    category: "Data Protection",
+    title: "Data Not Segregated by Tenant",
+    description: "Multi-tenant data not properly isolated",
+    severity: "critical",
+    cwe: "CWE-668",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement strict data segregation per tenant",
+    checkFunction: "checkTenantDataSegregation"
+  },
+  {
+    id: 498,
+    category: "Data Protection",
+    title: "No Data Export Limits",
+    description: "Users can export unlimited data",
+    severity: "medium",
+    cwe: "CWE-770",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement rate limits and size limits for data exports",
+    checkFunction: "checkDataExportLimits"
+  },
+  {
+    id: 499,
+    category: "Data Protection",
+    title: "Data Breach Response Plan Missing",
+    description: "No incident response plan for data breaches",
+    severity: "medium",
+    cwe: "CWE-1008",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Create and test data breach response plan",
+    checkFunction: "checkBreachResponsePlan"
+  },
+  {
+    id: 500,
+    category: "Data Protection",
+    title: "No Encryption at Rest",
+    description: "Database or file storage not encrypted",
+    severity: "high",
+    cwe: "CWE-311",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Enable full disk encryption and database encryption",
+    checkFunction: "checkEncryptionAtRest"
+  }
+];
+
+// Export for use in scanner
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { category5_CryptographyDataProtection };
+}

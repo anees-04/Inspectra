@@ -1,0 +1,54 @@
+{
+  "manifest_version": 3,
+  "name": "Inspectra",
+  "version": "1.0.0",
+  "description": "Web Security Configuration Auditor",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "webRequest"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "32": "assets/icons/icon32.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "assets/icons/icon16.png",
+      "32": "assets/icons/icon32.png",
+      "48": "assets/icons/icon48.png",
+      "128": "assets/icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "scripts/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "data/misconfigurations-category1.js",
+        "data/misconfigurations-category2.js",
+        "data/misconfigurations-category3.js",
+        "data/misconfigurations-category4.js",
+        "data/misconfigurations-category5.js",
+        "data/misconfigurations-category6.js",
+        "data/misconfigurations-category7.js",
+        "data/misconfigurations-category8.js",
+        "data/misconfigurations-category9.js",
+        "data/misconfigurations-category10.js",
+        "data/misconfigurations-index.js",
+        "scripts/security-checks.js",
+        "scripts/content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}

@@ -1,0 +1,1122 @@
+// ========================================
+// SECURITY MISCONFIGURATIONS DATABASE
+// Category 2: Authentication & Session Management
+// Total: 100 Misconfigurations
+// ========================================
+
+const category2_AuthenticationAndSession = [
+  // Password Security (1-20)
+  {
+    id: 101,
+    category: "Password Security",
+    title: "No Password Complexity Requirements",
+    description: "Passwords can be created without minimum complexity rules",
+    severity: "high",
+    cwe: "CWE-521",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Enforce password complexity: minimum 8 characters, uppercase, lowercase, numbers, special characters",
+    checkFunction: "checkPasswordComplexity"
+  },
+  {
+    id: 102,
+    category: "Password Security",
+    title: "No Minimum Password Length",
+    description: "System allows very short passwords",
+    severity: "high",
+    cwe: "CWE-521",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Enforce minimum password length of 12-16 characters",
+    checkFunction: "checkPasswordLength"
+  },
+  {
+    id: 103,
+    category: "Password Security",
+    title: "Password Length Maximum Too Low",
+    description: "Maximum password length restricted below 64 characters",
+    severity: "medium",
+    cwe: "CWE-521",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Allow passwords up to at least 64 characters",
+    checkFunction: "checkPasswordMaxLength"
+  },
+  {
+    id: 104,
+    category: "Password Security",
+    title: "Passwords Stored in Plain Text",
+    description: "Passwords stored without hashing",
+    severity: "critical",
+    cwe: "CWE-256",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use bcrypt, Argon2, or PBKDF2 to hash passwords",
+    checkFunction: "checkPlainTextPasswords"
+  },
+  {
+    id: 105,
+    category: "Password Security",
+    title: "Weak Password Hashing Algorithm",
+    description: "Using MD5, SHA-1, or simple SHA-256 for passwords",
+    severity: "critical",
+    cwe: "CWE-916",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use bcrypt, Argon2id, or PBKDF2 with high iteration count",
+    checkFunction: "checkWeakPasswordHash"
+  },
+  {
+    id: 106,
+    category: "Password Security",
+    title: "Password Hash Without Salt",
+    description: "Password hashes not salted",
+    severity: "critical",
+    cwe: "CWE-760",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use unique salt per password with proper hashing algorithm",
+    checkFunction: "checkPasswordSalt"
+  },
+  {
+    id: 107,
+    category: "Password Security",
+    title: "Common Passwords Allowed",
+    description: "System accepts commonly used weak passwords",
+    severity: "high",
+    cwe: "CWE-521",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Implement password blacklist checking against common passwords",
+    checkFunction: "checkCommonPasswords"
+  },
+  {
+    id: 108,
+    category: "Password Security",
+    title: "No Password Expiration Policy",
+    description: "Passwords never expire",
+    severity: "low",
+    cwe: "CWE-262",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Consider password expiration for sensitive systems (90-180 days)",
+    checkFunction: "checkPasswordExpiration"
+  },
+  {
+    id: 109,
+    category: "Password Security",
+    title: "Password Expiration Too Frequent",
+    description: "Password expiration set too short (less than 30 days)",
+    severity: "low",
+    cwe: "CWE-262",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Set reasonable expiration period (90+ days) or remove if using MFA",
+    checkFunction: "checkPasswordExpirationFrequent"
+  },
+  {
+    id: 110,
+    category: "Password Security",
+    title: "No Password History Tracking",
+    description: "Users can reuse previous passwords immediately",
+    severity: "medium",
+    cwe: "CWE-262",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Prevent reuse of last 5-10 passwords",
+    checkFunction: "checkPasswordHistory"
+  },
+  {
+    id: 111,
+    category: "Password Security",
+    title: "Password Reset Without Verification",
+    description: "Password reset doesn't verify user identity",
+    severity: "critical",
+    cwe: "CWE-640",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Require email verification, security questions, or SMS for password reset",
+    checkFunction: "checkPasswordResetVerification"
+  },
+  {
+    id: 112,
+    category: "Password Security",
+    title: "Password Reset Token Doesn't Expire",
+    description: "Password reset links never expire",
+    severity: "high",
+    cwe: "CWE-640",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Set password reset token expiration to 15-30 minutes",
+    checkFunction: "checkPasswordResetExpiration"
+  },
+  {
+    id: 113,
+    category: "Password Security",
+    title: "Password Reset Token Reusable",
+    description: "Password reset tokens can be used multiple times",
+    severity: "high",
+    cwe: "CWE-640",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Invalidate token after first use or password change",
+    checkFunction: "checkPasswordResetReuse"
+  },
+  {
+    id: 114,
+    category: "Password Security",
+    title: "Password Visible in URL",
+    description: "Password passed as URL parameter",
+    severity: "critical",
+    cwe: "CWE-598",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Always use POST method for password submission, never GET",
+    checkFunction: "checkPasswordInURL"
+  },
+  {
+    id: 115,
+    category: "Password Security",
+    title: "Password Transmitted Over HTTP",
+    description: "Password sent without encryption",
+    severity: "critical",
+    cwe: "CWE-319",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Always use HTTPS for authentication pages",
+    checkFunction: "checkPasswordHTTP"
+  },
+  {
+    id: 116,
+    category: "Password Security",
+    title: "Password Autocomplete Enabled",
+    description: "Password field allows browser autocomplete",
+    severity: "low",
+    cwe: "CWE-522",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Use autocomplete='new-password' or 'current-password' appropriately",
+    checkFunction: "checkPasswordAutocomplete"
+  },
+  {
+    id: 117,
+    category: "Password Security",
+    title: "Password Shown in Logs",
+    description: "Passwords logged in application or server logs",
+    severity: "critical",
+    cwe: "CWE-532",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Never log passwords, sanitize logs to remove credentials",
+    checkFunction: "checkPasswordLogging"
+  },
+  {
+    id: 118,
+    category: "Password Security",
+    title: "Default Passwords Not Changed",
+    description: "System still uses default credentials",
+    severity: "critical",
+    cwe: "CWE-798",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Force password change on first login, remove default accounts",
+    checkFunction: "checkDefaultPasswords"
+  },
+  {
+    id: 119,
+    category: "Password Security",
+    title: "Password Hint Too Revealing",
+    description: "Password hints reveal too much information",
+    severity: "medium",
+    cwe: "CWE-640",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Avoid password hints or make them vague",
+    checkFunction: "checkPasswordHints"
+  },
+  {
+    id: 120,
+    category: "Password Security",
+    title: "Password Strength Meter Missing",
+    description: "No feedback on password strength during creation",
+    severity: "low",
+    cwe: "CWE-521",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Implement real-time password strength indicator",
+    checkFunction: "checkPasswordStrengthMeter"
+  },
+
+  // Multi-Factor Authentication (21-35)
+  {
+    id: 121,
+    category: "Multi-Factor Authentication",
+    title: "No MFA Available",
+    description: "System doesn't support multi-factor authentication",
+    severity: "high",
+    cwe: "CWE-308",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Implement MFA using TOTP, SMS, or hardware tokens",
+    checkFunction: "checkMFAAvailable"
+  },
+  {
+    id: 122,
+    category: "Multi-Factor Authentication",
+    title: "MFA Not Enforced",
+    description: "MFA optional instead of mandatory",
+    severity: "high",
+    cwe: "CWE-308",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Enforce MFA for all users, especially privileged accounts",
+    checkFunction: "checkMFAEnforced"
+  },
+  {
+    id: 123,
+    category: "Multi-Factor Authentication",
+    title: "SMS-Based MFA Only",
+    description: "Only SMS authentication available (vulnerable to SIM swapping)",
+    severity: "medium",
+    cwe: "CWE-308",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Offer TOTP or hardware token options in addition to SMS",
+    checkFunction: "checkSMSOnlyMFA"
+  },
+  {
+    id: 124,
+    category: "Multi-Factor Authentication",
+    title: "MFA Backup Codes Insecure",
+    description: "Backup codes not properly secured or unlimited",
+    severity: "medium",
+    cwe: "CWE-308",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Generate limited backup codes, hash them, allow one-time use only",
+    checkFunction: "checkMFABackupCodes"
+  },
+  {
+    id: 125,
+    category: "Multi-Factor Authentication",
+    title: "MFA Can Be Bypassed",
+    description: "MFA can be skipped through alternate path",
+    severity: "critical",
+    cwe: "CWE-288",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Ensure MFA required on all authentication paths",
+    checkFunction: "checkMFABypass"
+  },
+  {
+    id: 126,
+    category: "Multi-Factor Authentication",
+    title: "TOTP Secret Shared Across Users",
+    description: "Same TOTP secret used for multiple accounts",
+    severity: "critical",
+    cwe: "CWE-344",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Generate unique TOTP secrets per user",
+    checkFunction: "checkTOTPShared"
+  },
+  {
+    id: 127,
+    category: "Multi-Factor Authentication",
+    title: "MFA Token Not Time-Limited",
+    description: "MFA tokens don't expire",
+    severity: "high",
+    cwe: "CWE-613",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Set short expiration for MFA tokens (30-60 seconds for TOTP)",
+    checkFunction: "checkMFATokenExpiration"
+  },
+  {
+    id: 128,
+    category: "Multi-Factor Authentication",
+    title: "MFA Rate Limiting Missing",
+    description: "No rate limiting on MFA attempts",
+    severity: "high",
+    cwe: "CWE-307",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Implement rate limiting and account lockout for failed MFA attempts",
+    checkFunction: "checkMFARateLimit"
+  },
+  {
+    id: 129,
+    category: "Multi-Factor Authentication",
+    title: "MFA Recovery Process Weak",
+    description: "MFA recovery doesn't verify identity sufficiently",
+    severity: "high",
+    cwe: "CWE-640",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Require strong identity verification for MFA reset",
+    checkFunction: "checkMFARecovery"
+  },
+  {
+    id: 130,
+    category: "Multi-Factor Authentication",
+    title: "No MFA for Privileged Accounts",
+    description: "Admin accounts don't require MFA",
+    severity: "critical",
+    cwe: "CWE-308",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Mandate MFA for all privileged and administrative accounts",
+    checkFunction: "checkMFAPrivileged"
+  },
+  {
+    id: 131,
+    category: "Multi-Factor Authentication",
+    title: "MFA Remember Device Insecure",
+    description: "'Remember this device' feature not properly secured",
+    severity: "medium",
+    cwe: "CWE-613",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Use secure device fingerprinting, set reasonable expiration",
+    checkFunction: "checkMFARememberDevice"
+  },
+  {
+    id: 132,
+    category: "Multi-Factor Authentication",
+    title: "WebAuthn/FIDO2 Not Supported",
+    description: "Modern passwordless authentication not available",
+    severity: "low",
+    cwe: "CWE-308",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Consider implementing WebAuthn for phishing-resistant authentication",
+    checkFunction: "checkWebAuthn"
+  },
+  {
+    id: 133,
+    category: "Multi-Factor Authentication",
+    title: "Push Notification MFA Fatigue Attack",
+    description: "Push notifications can be spammed to user",
+    severity: "medium",
+    cwe: "CWE-307",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Implement rate limiting and number matching for push notifications",
+    checkFunction: "checkPushMFAFatigue"
+  },
+  {
+    id: 134,
+    category: "Multi-Factor Authentication",
+    title: "MFA Enrollment Not Verified",
+    description: "MFA setup doesn't verify user can use second factor",
+    severity: "medium",
+    cwe: "CWE-287",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Require successful authentication during MFA enrollment",
+    checkFunction: "checkMFAEnrollmentVerification"
+  },
+  {
+    id: 135,
+    category: "Multi-Factor Authentication",
+    title: "MFA QR Code Over Insecure Channel",
+    description: "TOTP QR codes transmitted over HTTP",
+    severity: "high",
+    cwe: "CWE-319",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Always use HTTPS for MFA enrollment pages",
+    checkFunction: "checkMFAQRCodeHTTPS"
+  },
+
+  // Session Management (36-60)
+  {
+    id: 136,
+    category: "Session Management",
+    title: "Session ID in URL",
+    description: "Session identifier exposed in URL parameters",
+    severity: "critical",
+    cwe: "CWE-598",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Use cookies with HttpOnly and Secure flags for session IDs",
+    checkFunction: "checkSessionInURL"
+  },
+  {
+    id: 137,
+    category: "Session Management",
+    title: "Predictable Session IDs",
+    description: "Session identifiers are sequential or predictable",
+    severity: "critical",
+    cwe: "CWE-330",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Generate cryptographically random session IDs",
+    checkFunction: "checkPredictableSessionID"
+  },
+  {
+    id: 138,
+    category: "Session Management",
+    title: "Session ID Too Short",
+    description: "Session ID length insufficient for security",
+    severity: "high",
+    cwe: "CWE-6",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Use at least 128 bits of entropy for session IDs",
+    checkFunction: "checkSessionIDLength"
+  },
+  {
+    id: 139,
+    category: "Session Management",
+    title: "Session Cookie Without HttpOnly",
+    description: "Session cookie accessible via JavaScript",
+    severity: "high",
+    cwe: "CWE-1004",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Set HttpOnly flag on session cookies",
+    checkFunction: "checkSessionHttpOnly"
+  },
+  {
+    id: 140,
+    category: "Session Management",
+    title: "Session Cookie Without Secure Flag",
+    description: "Session cookie can be transmitted over HTTP",
+    severity: "high",
+    cwe: "CWE-614",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Set Secure flag on all session cookies",
+    checkFunction: "checkSessionSecureFlag"
+  },
+  {
+    id: 141,
+    category: "Session Management",
+    title: "Session Cookie Without SameSite",
+    description: "Session cookie lacks SameSite attribute",
+    severity: "high",
+    cwe: "CWE-352",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Set SameSite=Strict or SameSite=Lax on session cookies",
+    checkFunction: "checkSessionSameSite"
+  },
+  {
+    id: 142,
+    category: "Session Management",
+    title: "Session Never Expires",
+    description: "Sessions have no timeout",
+    severity: "high",
+    cwe: "CWE-613",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Implement absolute and idle session timeouts",
+    checkFunction: "checkSessionExpiration"
+  },
+  {
+    id: 143,
+    category: "Session Management",
+    title: "Session Timeout Too Long",
+    description: "Session timeout exceeds recommended duration",
+    severity: "medium",
+    cwe: "CWE-613",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Set session timeout to 15-30 minutes of inactivity",
+    checkFunction: "checkSessionTimeoutDuration"
+  },
+  {
+    id: 144,
+    category: "Session Management",
+    title: "No Idle Session Timeout",
+    description: "Sessions don't expire after period of inactivity",
+    severity: "medium",
+    cwe: "CWE-613",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Implement idle timeout separate from absolute timeout",
+    checkFunction: "checkIdleTimeout"
+  },
+  {
+    id: 145,
+    category: "Session Management",
+    title: "Session Fixation Possible",
+    description: "Session ID not regenerated after login",
+    severity: "high",
+    cwe: "CWE-384",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Regenerate session ID after authentication",
+    checkFunction: "checkSessionFixation"
+  },
+  {
+    id: 146,
+    category: "Session Management",
+    title: "Session Not Invalidated on Logout",
+    description: "Logout doesn't destroy server-side session",
+    severity: "high",
+    cwe: "CWE-613",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Invalidate session both client and server-side on logout",
+    checkFunction: "checkLogoutInvalidation"
+  },
+  {
+    id: 147,
+    category: "Session Management",
+    title: "Concurrent Sessions Allowed",
+    description: "Users can have multiple active sessions",
+    severity: "medium",
+    cwe: "CWE-799",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Limit concurrent sessions or notify users of new sessions",
+    checkFunction: "checkConcurrentSessions"
+  },
+  {
+    id: 148,
+    category: "Session Management",
+    title: "Session Token in Referrer Header",
+    description: "Session token leaked via Referrer header",
+    severity: "high",
+    cwe: "CWE-200",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Use cookies instead of URL tokens, set Referrer-Policy",
+    checkFunction: "checkSessionReferrer"
+  },
+  {
+    id: 149,
+    category: "Session Management",
+    title: "No Session Binding to IP",
+    description: "Session not bound to client IP address",
+    severity: "low",
+    cwe: "CWE-384",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Consider IP binding for high-security applications (be aware of mobile users)",
+    checkFunction: "checkSessionIPBinding"
+  },
+  {
+    id: 150,
+    category: "Session Management",
+    title: "No Session Binding to User-Agent",
+    description: "Session not bound to User-Agent string",
+    severity: "low",
+    cwe: "CWE-384",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Bind session to User-Agent as additional security layer",
+    checkFunction: "checkSessionUserAgent"
+  },
+  {
+    id: 151,
+    category: "Session Management",
+    title: "Session Hijacking Protection Missing",
+    description: "No detection of session hijacking attempts",
+    severity: "medium",
+    cwe: "CWE-384",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Monitor session for suspicious changes (IP, User-Agent, geolocation)",
+    checkFunction: "checkSessionHijackingProtection"
+  },
+  {
+    id: 152,
+    category: "Session Management",
+    title: "Session Data in Local Storage",
+    description: "Sensitive session data stored in localStorage",
+    severity: "high",
+    cwe: "CWE-539",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Store session data server-side, use HttpOnly cookies",
+    checkFunction: "checkSessionLocalStorage"
+  },
+  {
+    id: 153,
+    category: "Session Management",
+    title: "Session Reuse After Privilege Change",
+    description: "Session not regenerated after privilege escalation",
+    severity: "high",
+    cwe: "CWE-384",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Regenerate session ID after any privilege change",
+    checkFunction: "checkSessionPrivilegeChange"
+  },
+  {
+    id: 154,
+    category: "Session Management",
+    title: "Cross-Tab Session Confusion",
+    description: "Multiple tabs share same session unsafely",
+    severity: "low",
+    cwe: "CWE-613",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Implement proper cross-tab session synchronization",
+    checkFunction: "checkCrossTabSession"
+  },
+  {
+    id: 155,
+    category: "Session Management",
+    title: "Session Cookie Path Too Broad",
+    description: "Session cookie available to more paths than necessary",
+    severity: "low",
+    cwe: "CWE-16",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Set cookie path to most specific path needed",
+    checkFunction: "checkSessionCookiePath"
+  },
+
+  // JWT/Token Authentication (61-80)
+  {
+    id: 156,
+    category: "JWT/Token Auth",
+    title: "JWT Signature Not Verified",
+    description: "Application doesn't verify JWT signature",
+    severity: "critical",
+    cwe: "CWE-347",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Always verify JWT signatures before trusting claims",
+    checkFunction: "checkJWTSignatureVerification"
+  },
+  {
+    id: 157,
+    category: "JWT/Token Auth",
+    title: "JWT Using 'none' Algorithm",
+    description: "JWT accepts 'none' algorithm (no signature)",
+    severity: "critical",
+    cwe: "CWE-347",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Reject JWTs with 'none' algorithm",
+    checkFunction: "checkJWTNoneAlgorithm"
+  },
+  {
+    id: 158,
+    category: "JWT/Token Auth",
+    title: "JWT Algorithm Confusion",
+    description: "JWT implementation vulnerable to algorithm confusion attack",
+    severity: "critical",
+    cwe: "CWE-347",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Explicitly specify and validate expected algorithm",
+    checkFunction: "checkJWTAlgorithmConfusion"
+  },
+  {
+    id: 159,
+    category: "JWT/Token Auth",
+    title: "JWT Missing Expiration",
+    description: "JWT doesn't have exp claim",
+    severity: "high",
+    cwe: "CWE-613",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Always include and validate exp claim in JWTs",
+    checkFunction: "checkJWTExpiration"
+  },
+  {
+    id: 160,
+    category: "JWT/Token Auth",
+    title: "JWT Expiration Too Long",
+    description: "JWT lifetime exceeds recommended duration",
+    severity: "medium",
+    cwe: "CWE-613",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Set JWT expiration to 15 minutes, use refresh tokens for longer sessions",
+    checkFunction: "checkJWTExpirationDuration"
+  },
+  {
+    id: 161,
+    category: "JWT/Token Auth",
+    title: "JWT Missing Issuer Validation",
+    description: "JWT iss claim not validated",
+    severity: "medium",
+    cwe: "CWE-345",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Validate iss claim matches expected issuer",
+    checkFunction: "checkJWTIssuer"
+  },
+  {
+    id: 162,
+    category: "JWT/Token Auth",
+    title: "JWT Missing Audience Validation",
+    description: "JWT aud claim not checked",
+    severity: "medium",
+    cwe: "CWE-345",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Validate aud claim matches expected audience",
+    checkFunction: "checkJWTAudience"
+  },
+  {
+    id: 163,
+    category: "JWT/Token Auth",
+    title: "JWT Stored in Local Storage",
+    description: "Access token stored in localStorage vulnerable to XSS",
+    severity: "high",
+    cwe: "CWE-922",
+    owasp: "A03:2021 - Injection",
+    recommendation: "Store tokens in HttpOnly cookies or use BFF pattern",
+    checkFunction: "checkJWTLocalStorage"
+  },
+  {
+    id: 164,
+    category: "JWT/Token Auth",
+    title: "JWT Contains Sensitive Data",
+    description: "Sensitive information in JWT payload",
+    severity: "medium",
+    cwe: "CWE-312",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Keep minimal claims in JWT, encrypt if sensitive data needed (JWE)",
+    checkFunction: "checkJWTSensitiveData"
+  },
+  {
+    id: 165,
+    category: "JWT/Token Auth",
+    title: "Refresh Token Without Rotation",
+    description: "Refresh tokens reusable indefinitely",
+    severity: "high",
+    cwe: "CWE-613",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Implement refresh token rotation",
+    checkFunction: "checkRefreshTokenRotation"
+  },
+  {
+    id: 166,
+    category: "JWT/Token Auth",
+    title: "Refresh Token Never Expires",
+    description: "Refresh tokens have no expiration",
+    severity: "high",
+    cwe: "CWE-613",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Set refresh token expiration (7-30 days)",
+    checkFunction: "checkRefreshTokenExpiration"
+  },
+  {
+    id: 167,
+    category: "JWT/Token Auth",
+    title: "No Token Revocation Mechanism",
+    description: "No way to revoke issued tokens before expiration",
+    severity: "high",
+    cwe: "CWE-613",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Implement token blacklist or use short-lived tokens with refresh",
+    checkFunction: "checkTokenRevocation"
+  },
+  {
+    id: 168,
+    category: "JWT/Token Auth",
+    title: "JWT Weak Signing Key",
+    description: "JWT signed with weak secret key",
+    severity: "critical",
+    cwe: "CWE-326",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use strong, random signing keys (256+ bits for HS256)",
+    checkFunction: "checkJWTWeakKey"
+  },
+  {
+    id: 169,
+    category: "JWT/Token Auth",
+    title: "JWT Kid Header Injection",
+    description: "JWT kid header parameter vulnerable to injection",
+    severity: "high",
+    cwe: "CWE-74",
+    owasp: "A03:2021 - Injection",
+    recommendation: "Validate kid parameter against whitelist",
+    checkFunction: "checkJWTKidInjection"
+  },
+  {
+    id: 170,
+    category: "JWT/Token Auth",
+    title: "JWT JKU Header Trusted",
+    description: "JWT jku header allows arbitrary key URLs",
+    severity: "critical",
+    cwe: "CWE-918",
+    owasp: "A10:2021 - Server-Side Request Forgery",
+    recommendation: "Disable jku or whitelist allowed URLs",
+    checkFunction: "checkJWTJKU"
+  },
+  {
+    id: 171,
+    category: "JWT/Token Auth",
+    title: "JWT X5U Header Trusted",
+    description: "JWT x5u header allows arbitrary certificate URLs",
+    severity: "high",
+    cwe: "CWE-918",
+    owasp: "A10:2021 - Server-Side Request Forgery",
+    recommendation: "Disable x5u or whitelist allowed URLs",
+    checkFunction: "checkJWTX5U"
+  },
+  {
+    id: 172,
+    category: "JWT/Token Auth",
+    title: "API Keys in URLs",
+    description: "API keys passed in URL parameters",
+    severity: "high",
+    cwe: "CWE-598",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Use Authorization header for API keys",
+    checkFunction: "checkAPIKeyInURL"
+  },
+  {
+    id: 173,
+    category: "JWT/Token Auth",
+    title: "API Keys Without Rate Limiting",
+    description: "No rate limiting on API key usage",
+    severity: "medium",
+    cwe: "CWE-799",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement per-key rate limiting",
+    checkFunction: "checkAPIKeyRateLimit"
+  },
+  {
+    id: 174,
+    category: "JWT/Token Auth",
+    title: "API Keys Never Rotate",
+    description: "No API key rotation policy",
+    severity: "medium",
+    cwe: "CWE-324",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Implement API key rotation and expiration",
+    checkFunction: "checkAPIKeyRotation"
+  },
+  {
+    id: 175,
+    category: "JWT/Token Auth",
+    title: "Bearer Token Without TLS",
+    description: "Bearer tokens transmitted over HTTP",
+    severity: "critical",
+    cwe: "CWE-319",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Always use HTTPS for bearer token transmission",
+    checkFunction: "checkBearerTokenHTTPS"
+  },
+
+  // OAuth/SSO (81-100)
+  {
+    id: 176,
+    category: "OAuth/SSO",
+    title: "OAuth Missing State Parameter",
+    description: "OAuth flow doesn't use state parameter for CSRF protection",
+    severity: "high",
+    cwe: "CWE-352",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Always use state parameter in OAuth flows",
+    checkFunction: "checkOAuthState"
+  },
+  {
+    id: 177,
+    category: "OAuth/SSO",
+    title: "OAuth State Not Validated",
+    description: "State parameter not properly validated",
+    severity: "high",
+    cwe: "CWE-352",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Validate state parameter matches session state",
+    checkFunction: "checkOAuthStateValidation"
+  },
+  {
+    id: 178,
+    category: "OAuth/SSO",
+    title: "OAuth Redirect URI Not Validated",
+    description: "Redirect URI not properly validated",
+    severity: "critical",
+    cwe: "CWE-601",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Strictly validate redirect_uri against pre-registered URIs",
+    checkFunction: "checkOAuthRedirectValidation"
+  },
+  {
+    id: 179,
+    category: "OAuth/SSO",
+    title: "OAuth Using Implicit Flow",
+    description: "Using deprecated implicit grant flow",
+    severity: "high",
+    cwe: "CWE-287",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Use authorization code flow with PKCE instead",
+    checkFunction: "checkOAuthImplicitFlow"
+  },
+  {
+    id: 180,
+    category: "OAuth/SSO",
+    title: "OAuth Missing PKCE",
+    description: "Authorization code flow without PKCE",
+    severity: "high",
+    cwe: "CWE-287",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Implement PKCE for all OAuth flows",
+    checkFunction: "checkOAuthPKCE"
+  },
+  {
+    id: 181,
+    category: "OAuth/SSO",
+    title: "OAuth Client Secret Exposed",
+    description: "Client secret in client-side code",
+    severity: "critical",
+    cwe: "CWE-798",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Never expose client secrets in public clients, use PKCE",
+    checkFunction: "checkOAuthClientSecret"
+  },
+  {
+    id: 182,
+    category: "OAuth/SSO",
+    title: "OAuth Scope Too Permissive",
+    description: "Requesting excessive OAuth scopes",
+    severity: "medium",
+    cwe: "CWE-250",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Request minimum necessary scopes (principle of least privilege)",
+    checkFunction: "checkOAuthScope"
+  },
+  {
+    id: 183,
+    category: "OAuth/SSO",
+    title: "OAuth Token Leaked in Logs",
+    description: "OAuth tokens logged in application logs",
+    severity: "high",
+    cwe: "CWE-532",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Sanitize logs to remove tokens and sensitive data",
+    checkFunction: "checkOAuthTokenLogging"
+  },
+  {
+    id: 184,
+    category: "OAuth/SSO",
+    title: "SAML Response Not Signed",
+    description: "SAML assertions accepted without signature",
+    severity: "critical",
+    cwe: "CWE-347",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Require signed SAML assertions",
+    checkFunction: "checkSAMLSignature"
+  },
+  {
+    id: 185,
+    category: "OAuth/SSO",
+    title: "SAML XML Signature Wrapping",
+    description: "Vulnerable to SAML signature wrapping attack",
+    severity: "critical",
+    cwe: "CWE-91",
+    owasp: "A03:2021 - Injection",
+    recommendation: "Use proper XML signature validation library",
+    checkFunction: "checkSAMLWrapping"
+  },
+  {
+    id: 186,
+    category: "OAuth/SSO",
+    title: "SAML Response Replay",
+    description: "No protection against SAML response replay",
+    severity: "high",
+    cwe: "CWE-294",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Validate NotOnOrAfter, NotBefore, and track assertion IDs",
+    checkFunction: "checkSAMLReplay"
+  },
+  {
+    id: 187,
+    category: "OAuth/SSO",
+    title: "SAML Recipient Not Validated",
+    description: "SAML Recipient attribute not checked",
+    severity: "high",
+    cwe: "CWE-345",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Validate Recipient matches current service URL",
+    checkFunction: "checkSAMLRecipient"
+  },
+  {
+    id: 188,
+    category: "OAuth/SSO",
+    title: "SSO Logout Not Implemented",
+    description: "Single Sign-Out not implemented properly",
+    severity: "medium",
+    cwe: "CWE-613",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Implement proper SLO (Single Logout) for SSO",
+    checkFunction: "checkSSOLogout"
+  },
+  {
+    id: 189,
+    category: "OAuth/SSO",
+    title: "OpenID Connect Nonce Missing",
+    description: "OIDC nonce parameter not used",
+    severity: "medium",
+    cwe: "CWE-352",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Use nonce parameter in OIDC flows",
+    checkFunction: "checkOIDCNonce"
+  },
+  {
+    id: 190,
+    category: "OAuth/SSO",
+    title: "ID Token Signature Not Verified",
+    description: "OpenID Connect ID token signature not validated",
+    severity: "critical",
+    cwe: "CWE-347",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Always verify ID token signature",
+    checkFunction: "checkIDTokenSignature"
+  },
+  {
+    id: 191,
+    category: "OAuth/SSO",
+    title: "Social Login Without Email Verification",
+    description: "Email from social provider not verified",
+    severity: "medium",
+    cwe: "CWE-287",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Verify email_verified claim from OAuth provider",
+    checkFunction: "checkSocialEmailVerified"
+  },
+  {
+    id: 192,
+    category: "OAuth/SSO",
+    title: "Account Takeover via OAuth",
+    description: "OAuth account linking vulnerable to takeover",
+    severity: "critical",
+    cwe: "CWE-284",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Require authentication before linking OAuth accounts",
+    checkFunction: "checkOAuthAccountLinking"
+  },
+  {
+    id: 193,
+    category: "OAuth/SSO",
+    title: "OAuth Covert Redirect",
+    description: "OAuth vulnerable to covert redirect attack",
+    severity: "high",
+    cwe: "CWE-601",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Use exact redirect URI matching, not prefix matching",
+    checkFunction: "checkOAuthCovertRedirect"
+  },
+  {
+    id: 194,
+    category: "OAuth/SSO",
+    title: "Mixed OAuth and Basic Auth",
+    description: "Mixing OAuth with basic authentication unsafely",
+    severity: "medium",
+    cwe: "CWE-287",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Use consistent authentication method",
+    checkFunction: "checkMixedAuth"
+  },
+  {
+    id: 195,
+    category: "OAuth/SSO",
+    title: "OAuth Device Flow Without User Code",
+    description: "Device authorization flow missing user code confirmation",
+    severity: "medium",
+    cwe: "CWE-287",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Implement proper device flow with user code",
+    checkFunction: "checkOAuthDeviceFlow"
+  },
+  {
+    id: 196,
+    category: "OAuth/SSO",
+    title: "OAuth Token Introspection Not Used",
+    description: "Token validation doesn't use introspection endpoint",
+    severity: "low",
+    cwe: "CWE-613",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Use token introspection for opaque tokens",
+    checkFunction: "checkOAuthIntrospection"
+  },
+  {
+    id: 197,
+    category: "OAuth/SSO",
+    title: "OAuth Dynamic Client Registration Insecure",
+    description: "Dynamic client registration without proper validation",
+    severity: "high",
+    cwe: "CWE-346",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Validate and rate-limit dynamic client registration",
+    checkFunction: "checkOAuthDynamicRegistration"
+  },
+  {
+    id: 198,
+    category: "OAuth/SSO",
+    title: "OAuth Resource Server No Token Validation",
+    description: "Resource server doesn't validate access tokens properly",
+    severity: "critical",
+    cwe: "CWE-287",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Validate all access tokens at resource server",
+    checkFunction: "checkResourceServerValidation"
+  },
+  {
+    id: 199,
+    category: "OAuth/SSO",
+    title: "OAuth Authorization Server Metadata Not Used",
+    description: "Not using /.well-known/oauth-authorization-server",
+    severity: "low",
+    cwe: "CWE-16",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Use OAuth discovery metadata endpoint",
+    checkFunction: "checkOAuthMetadata"
+  },
+  {
+    id: 200,
+    category: "OAuth/SSO",
+    title: "OAuth Client Credentials in Source Code",
+    description: "OAuth client credentials hardcoded in source",
+    severity: "critical",
+    cwe: "CWE-798",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Store credentials in environment variables or secure vault",
+    checkFunction: "checkOAuthHardcodedCreds"
+  }
+];
+
+// Export for use in scanner
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { category2_AuthenticationAndSession };
+}

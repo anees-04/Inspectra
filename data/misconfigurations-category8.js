@@ -1,0 +1,1122 @@
+// ========================================
+// SECURITY MISCONFIGURATIONS DATABASE
+// Category 8: Configuration & Deployment Security
+// Total: 100 Misconfigurations
+// ========================================
+
+const category8_ConfigurationDeployment = [
+  // Server Configuration (1-25)
+  {
+    id: 701,
+    category: "Server Configuration",
+    title: "Default Admin Credentials",
+    description: "Default admin/admin or root/password still active",
+    severity: "critical",
+    cwe: "CWE-798",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Change all default credentials immediately",
+    checkFunction: "checkDefaultCredentials"
+  },
+  {
+    id: 702,
+    category: "Server Configuration",
+    title: "Directory Listing Enabled",
+    description: "Web server shows directory contents",
+    severity: "medium",
+    cwe: "CWE-548",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Disable directory listing in web server config",
+    checkFunction: "checkDirectoryListing"
+  },
+  {
+    id: 703,
+    category: "Server Configuration",
+    title: "Server Banner Information Disclosure",
+    description: "Server headers expose version information",
+    severity: "low",
+    cwe: "CWE-200",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Remove or obfuscate Server header",
+    checkFunction: "checkServerBanner"
+  },
+  {
+    id: 704,
+    category: "Server Configuration",
+    title: "X-Powered-By Header Present",
+    description: "Technology stack exposed in headers",
+    severity: "low",
+    cwe: "CWE-200",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Remove X-Powered-By header",
+    checkFunction: "checkXPoweredBy"
+  },
+  {
+    id: 705,
+    category: "Server Configuration",
+    title: "Debug Mode Enabled in Production",
+    description: "Application running in debug/verbose mode",
+    severity: "high",
+    cwe: "CWE-489",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Disable debug mode in production",
+    checkFunction: "checkDebugMode"
+  },
+  {
+    id: 706,
+    category: "Server Configuration",
+    title: "Unnecessary HTTP Methods Enabled",
+    description: "TRACE, OPTIONS, PUT, DELETE allowed",
+    severity: "medium",
+    cwe: "CWE-650",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Disable unnecessary HTTP methods",
+    checkFunction: "checkUnnecessaryHTTPMethods"
+  },
+  {
+    id: 707,
+    category: "Server Configuration",
+    title: "Backup Files Accessible",
+    description: ".bak, .old, .swp files publicly accessible",
+    severity: "high",
+    cwe: "CWE-530",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Block access to backup file extensions",
+    checkFunction: "checkBackupFilesAccessible"
+  },
+  {
+    id: 708,
+    category: "Server Configuration",
+    title: "Configuration Files Exposed",
+    description: ".env, config.php, web.config accessible",
+    severity: "critical",
+    cwe: "CWE-538",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Block access to configuration files",
+    checkFunction: "checkConfigFilesExposed"
+  },
+  {
+    id: 709,
+    category: "Server Configuration",
+    title: "Git Repository Exposed",
+    description: ".git directory publicly accessible",
+    severity: "critical",
+    cwe: "CWE-538",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Block access to .git directory",
+    checkFunction: "checkGitExposed"
+  },
+  {
+    id: 710,
+    category: "Server Configuration",
+    title: "SVN Repository Exposed",
+    description: ".svn directory accessible",
+    severity: "high",
+    cwe: "CWE-538",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Block access to .svn directory",
+    checkFunction: "checkSVNExposed"
+  },
+  {
+    id: 711,
+    category: "Server Configuration",
+    title: "robots.txt Reveals Sensitive Paths",
+    description: "robots.txt discloses admin or private URLs",
+    severity: "low",
+    cwe: "CWE-200",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Don't list sensitive paths in robots.txt",
+    checkFunction: "checkRobotsTxt"
+  },
+  {
+    id: 712,
+    category: "Server Configuration",
+    title: "security.txt Missing",
+    description: "No security.txt for vulnerability reporting",
+    severity: "low",
+    cwe: "CWE-1104",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Create .well-known/security.txt with contact info",
+    checkFunction: "checkSecurityTxt"
+  },
+  {
+    id: 713,
+    category: "Server Configuration",
+    title: "Admin Panel on Default Path",
+    description: "Admin interface at /admin, /wp-admin, /phpmyadmin",
+    severity: "medium",
+    cwe: "CWE-425",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Use non-standard admin path, add authentication",
+    checkFunction: "checkAdminPanelPath"
+  },
+  {
+    id: 714,
+    category: "Server Configuration",
+    title: "phpinfo() Accessible",
+    description: "phpinfo() page reveals system configuration",
+    severity: "medium",
+    cwe: "CWE-200",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Remove or protect phpinfo() pages",
+    checkFunction: "checkPhpInfo"
+  },
+  {
+    id: 715,
+    category: "Server Configuration",
+    title: "Test/Demo Pages in Production",
+    description: "test.php, demo/, sample/ pages accessible",
+    severity: "medium",
+    cwe: "CWE-489",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Remove test pages from production",
+    checkFunction: "checkTestPages"
+  },
+  {
+    id: 716,
+    category: "Server Configuration",
+    title: "HTTP Public Key Pinning Not Configured",
+    description: "HPKP header not set (deprecated but check alternatives)",
+    severity: "low",
+    cwe: "CWE-295",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use Certificate Transparency and Expect-CT instead of HPKP",
+    checkFunction: "checkHPKP"
+  },
+  {
+    id: 717,
+    category: "Server Configuration",
+    title: "Server-Side Includes (SSI) Enabled",
+    description: "SSI directives enabled, potential injection",
+    severity: "medium",
+    cwe: "CWE-96",
+    owasp: "A03:2021 - Injection",
+    recommendation: "Disable SSI if not needed",
+    checkFunction: "checkSSI"
+  },
+  {
+    id: 718,
+    category: "Server Configuration",
+    title: "WebDAV Enabled",
+    description: "WebDAV allowing file modification",
+    severity: "high",
+    cwe: "CWE-434",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Disable WebDAV unless required",
+    checkFunction: "checkWebDAV"
+  },
+  {
+    id: 719,
+    category: "Server Configuration",
+    title: "Server Response Time Leakage",
+    description: "Server response times reveal information",
+    severity: "low",
+    cwe: "CWE-208",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Use constant-time operations for security checks",
+    checkFunction: "checkResponseTimeLeak"
+  },
+  {
+    id: 720,
+    category: "Server Configuration",
+    title: "Missing Security Headers",
+    description: "X-Frame-Options, X-Content-Type-Options missing",
+    severity: "medium",
+    cwe: "CWE-1021",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Add all recommended security headers",
+    checkFunction: "checkSecurityHeaders"
+  },
+  {
+    id: 721,
+    category: "Server Configuration",
+    title: "Compression Information Disclosure",
+    description: "BREACH attack possible via compression",
+    severity: "low",
+    cwe: "CWE-310",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Disable compression for sensitive endpoints or use CSRF tokens",
+    checkFunction: "checkCompressionLeakage"
+  },
+  {
+    id: 722,
+    category: "Server Configuration",
+    title: "HTTP/2 Push Misconfiguration",
+    description: "Server push used without proper validation",
+    severity: "low",
+    cwe: "CWE-1021",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Validate pushed resources, use proper CSP",
+    checkFunction: "checkHTTP2Push"
+  },
+  {
+    id: 723,
+    category: "Server Configuration",
+    title: "IPv6 Not Configured",
+    description: "IPv6 not properly secured or disabled",
+    severity: "low",
+    cwe: "CWE-1059",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Configure IPv6 security or disable if not used",
+    checkFunction: "checkIPv6Config"
+  },
+  {
+    id: 724,
+    category: "Server Configuration",
+    title: "Load Balancer IP Forwarding Issues",
+    description: "X-Forwarded-For not validated, IP spoofing possible",
+    severity: "medium",
+    cwe: "CWE-290",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Validate X-Forwarded-For, trust only load balancer IP",
+    checkFunction: "checkXForwardedFor"
+  },
+  {
+    id: 725,
+    category: "Server Configuration",
+    title: "Virtual Host Misconfiguration",
+    description: "Default vhost catches unexpected domains",
+    severity: "medium",
+    cwe: "CWE-425",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Configure default vhost to return 404",
+    checkFunction: "checkVirtualHost"
+  },
+
+  // Environment Variables (26-40)
+  {
+    id: 726,
+    category: "Environment Variables",
+    title: "Secrets in Environment Variables",
+    description: "Database passwords in environment variables",
+    severity: "high",
+    cwe: "CWE-526",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use secrets management (Vault, AWS Secrets Manager)",
+    checkFunction: "checkSecretsInEnv"
+  },
+  {
+    id: 727,
+    category: "Environment Variables",
+    title: ".env File Exposed",
+    description: ".env file accessible via web",
+    severity: "critical",
+    cwe: "CWE-538",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Block access to .env files, store outside web root",
+    checkFunction: "checkEnvFileExposed"
+  },
+  {
+    id: 728,
+    category: "Environment Variables",
+    title: "Environment Variable Injection",
+    description: "User input influences environment variables",
+    severity: "high",
+    cwe: "CWE-74",
+    owasp: "A03:2021 - Injection",
+    recommendation: "Never allow user input to set environment variables",
+    checkFunction: "checkEnvInjection"
+  },
+  {
+    id: 729,
+    category: "Environment Variables",
+    title: "Database Connection String in Code",
+    description: "Connection string hardcoded, not in environment",
+    severity: "high",
+    cwe: "CWE-798",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use environment variables for connection strings",
+    checkFunction: "checkConnectionStringInCode"
+  },
+  {
+    id: 730,
+    category: "Environment Variables",
+    title: "Production and Dev Share Config",
+    description: "Same configuration for all environments",
+    severity: "medium",
+    cwe: "CWE-1059",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Separate configs per environment",
+    checkFunction: "checkSharedConfig"
+  },
+  {
+    id: 731,
+    category: "Environment Variables",
+    title: "Environment Detection Unreliable",
+    description: "Can't reliably determine if production/dev",
+    severity: "medium",
+    cwe: "CWE-1059",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Use explicit environment variable (NODE_ENV, etc.)",
+    checkFunction: "checkEnvironmentDetection"
+  },
+  {
+    id: 732,
+    category: "Environment Variables",
+    title: "Config File Contains Secrets",
+    description: "Secrets committed to config files",
+    severity: "critical",
+    cwe: "CWE-13",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use .gitignore, external secrets management",
+    checkFunction: "checkSecretsInConfig"
+  },
+  {
+    id: 733,
+    category: "Environment Variables",
+    title: "No Config Validation",
+    description: "Missing or invalid config values not detected",
+    severity: "medium",
+    cwe: "CWE-1188",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Validate all configuration on startup",
+    checkFunction: "checkConfigValidation"
+  },
+  {
+    id: 734,
+    category: "Environment Variables",
+    title: "Config Overrides Not Logged",
+    description: "Configuration changes not audited",
+    severity: "low",
+    cwe: "CWE-778",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Log all configuration changes",
+    checkFunction: "checkConfigLogging"
+  },
+  {
+    id: 735,
+    category: "Environment Variables",
+    title: "Feature Flags Insecure",
+    description: "Feature flags controllable by users",
+    severity: "high",
+    cwe: "CWE-639",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Control feature flags server-side only",
+    checkFunction: "checkFeatureFlags"
+  },
+  {
+    id: 736,
+    category: "Environment Variables",
+    title: "Configuration API Unsecured",
+    description: "Config endpoint accessible without authentication",
+    severity: "critical",
+    cwe: "CWE-306",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Protect configuration APIs with strong auth",
+    checkFunction: "checkConfigAPI"
+  },
+  {
+    id: 737,
+    category: "Environment Variables",
+    title: "Environment Info in Client",
+    description: "Environment details exposed to frontend",
+    severity: "low",
+    cwe: "CWE-200",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Don't expose environment info to client",
+    checkFunction: "checkEnvInfoInClient"
+  },
+  {
+    id: 738,
+    category: "Environment Variables",
+    title: "No Secrets Rotation Process",
+    description: "Secrets never rotated",
+    severity: "medium",
+    cwe: "CWE-324",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Implement regular secrets rotation",
+    checkFunction: "checkSecretsRotation"
+  },
+  {
+    id: 739,
+    category: "Environment Variables",
+    title: "Config Management System Exposed",
+    description: "Consul, etcd accessible without authentication",
+    severity: "critical",
+    cwe: "CWE-306",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Secure config management with ACLs",
+    checkFunction: "checkConfigManagementExposed"
+  },
+  {
+    id: 740,
+    category: "Environment Variables",
+    title: "Default Ports Used",
+    description: "Using well-known default ports",
+    severity: "low",
+    cwe: "CWE-1188",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Consider non-standard ports to reduce automated attacks",
+    checkFunction: "checkDefaultPorts"
+  },
+
+  // Containerization & Orchestration (41-65)
+  {
+    id: 741,
+    category: "Containers",
+    title: "Docker Container Running as Root",
+    description: "Container processes run with root privileges",
+    severity: "high",
+    cwe: "CWE-250",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Use non-root USER in Dockerfile",
+    checkFunction: "checkDockerRoot"
+  },
+  {
+    id: 742,
+    category: "Containers",
+    title: "Privileged Container",
+    description: "Container running with --privileged flag",
+    severity: "critical",
+    cwe: "CWE-250",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Avoid privileged mode, use specific capabilities",
+    checkFunction: "checkPrivilegedContainer"
+  },
+  {
+    id: 743,
+    category: "Containers",
+    title: "Docker Socket Mounted",
+    description: "/var/run/docker.sock mounted in container",
+    severity: "critical",
+    cwe: "CWE-250",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Never mount Docker socket unless absolutely necessary",
+    checkFunction: "checkDockerSocketMount"
+  },
+  {
+    id: 744,
+    category: "Containers",
+    title: "Container Image from Untrusted Source",
+    description: "Using images not from verified registries",
+    severity: "high",
+    cwe: "CWE-494",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Use official images, scan with Trivy/Snyk",
+    checkFunction: "checkUntrustedImages"
+  },
+  {
+    id: 745,
+    category: "Containers",
+    title: "Latest Tag in Production",
+    description: "Using :latest or unversioned image tags",
+    severity: "medium",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Pin specific version tags",
+    checkFunction: "checkLatestTag"
+  },
+  {
+    id: 746,
+    category: "Containers",
+    title: "Container Base Image Outdated",
+    description: "Base image has known vulnerabilities",
+    severity: "high",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Regularly update base images, scan for CVEs",
+    checkFunction: "checkOutdatedBaseImage"
+  },
+  {
+    id: 747,
+    category: "Containers",
+    title: "Excessive Container Capabilities",
+    description: "Container has unnecessary Linux capabilities",
+    severity: "medium",
+    cwe: "CWE-250",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Drop all capabilities, add only required ones",
+    checkFunction: "checkContainerCapabilities"
+  },
+  {
+    id: 748,
+    category: "Containers",
+    title: "Container No Resource Limits",
+    description: "No CPU/memory limits on containers",
+    severity: "medium",
+    cwe: "CWE-770",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Set resource limits and requests",
+    checkFunction: "checkContainerResourceLimits"
+  },
+  {
+    id: 749,
+    category: "Containers",
+    title: "Container Read-Write Filesystem",
+    description: "Container filesystem writable",
+    severity: "low",
+    cwe: "CWE-732",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Use read-only root filesystem where possible",
+    checkFunction: "checkContainerReadOnly"
+  },
+  {
+    id: 750,
+    category: "Containers",
+    title: "Secrets in Container Image",
+    description: "Secrets baked into Docker layers",
+    severity: "critical",
+    cwe: "CWE-798",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use Docker secrets or mount at runtime",
+    checkFunction: "checkSecretsInImage"
+  },
+  {
+    id: 751,
+    category: "Containers",
+    title: "Container Image Not Signed",
+    description: "Docker Content Trust not enabled",
+    severity: "medium",
+    cwe: "CWE-347",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Enable Docker Content Trust, sign images",
+    checkFunction: "checkImageSigning"
+  },
+  {
+    id: 752,
+    category: "Containers",
+    title: "Container Registry Unsecured",
+    description: "Private registry accessible without authentication",
+    severity: "critical",
+    cwe: "CWE-306",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Secure registry with authentication and TLS",
+    checkFunction: "checkRegistrySecurity"
+  },
+  {
+    id: 753,
+    category: "Containers",
+    title: "Kubernetes Dashboard Exposed",
+    description: "K8s dashboard publicly accessible",
+    severity: "critical",
+    cwe: "CWE-306",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Restrict dashboard access, use RBAC",
+    checkFunction: "checkK8sDashboard"
+  },
+  {
+    id: 754,
+    category: "Containers",
+    title: "Kubernetes RBAC Too Permissive",
+    description: "Service accounts with cluster-admin",
+    severity: "high",
+    cwe: "CWE-269",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Apply least privilege RBAC policies",
+    checkFunction: "checkK8sRBAC"
+  },
+  {
+    id: 755,
+    category: "Containers",
+    title: "Kubernetes Pod Security Policy Missing",
+    description: "No PSP or Pod Security Standards enforced",
+    severity: "high",
+    cwe: "CWE-1188",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Implement Pod Security Standards (restricted)",
+    checkFunction: "checkPodSecurityPolicy"
+  },
+  {
+    id: 756,
+    category: "Containers",
+    title: "Kubernetes Network Policy Missing",
+    description: "All pods can communicate without restrictions",
+    severity: "medium",
+    cwe: "CWE-284",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement NetworkPolicy for pod isolation",
+    checkFunction: "checkK8sNetworkPolicy"
+  },
+  {
+    id: 757,
+    category: "Containers",
+    title: "Kubernetes Secrets Not Encrypted",
+    description: "Secrets stored in etcd without encryption",
+    severity: "high",
+    cwe: "CWE-311",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Enable encryption at rest for Kubernetes secrets",
+    checkFunction: "checkK8sSecretsEncryption"
+  },
+  {
+    id: 758,
+    category: "Containers",
+    title: "Kubernetes Admission Control Disabled",
+    description: "No admission webhooks for policy enforcement",
+    severity: "medium",
+    cwe: "CWE-1188",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Enable admission controllers (OPA, Kyverno)",
+    checkFunction: "checkK8sAdmission"
+  },
+  {
+    id: 759,
+    category: "Containers",
+    title: "Kubernetes Nodes Not Hardened",
+    description: "Worker nodes not following CIS benchmarks",
+    severity: "medium",
+    cwe: "CWE-1188",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Apply CIS Kubernetes benchmark",
+    checkFunction: "checkK8sNodeHardening"
+  },
+  {
+    id: 760,
+    category: "Containers",
+    title: "Kubernetes Audit Logging Disabled",
+    description: "API server audit logs not enabled",
+    severity: "medium",
+    cwe: "CWE-778",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Enable Kubernetes audit logging",
+    checkFunction: "checkK8sAuditLogging"
+  },
+  {
+    id: 761,
+    category: "Containers",
+    title: "Helm Charts from Untrusted Sources",
+    description: "Installing Helm charts without verification",
+    severity: "medium",
+    cwe: "CWE-494",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Verify Helm chart signatures, use trusted repos",
+    checkFunction: "checkHelmSecurity"
+  },
+  {
+    id: 762,
+    category: "Containers",
+    title: "Container Escape Possible",
+    description: "Kernel vulnerabilities allow container escape",
+    severity: "critical",
+    cwe: "CWE-250",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Keep kernel updated, use seccomp profiles",
+    checkFunction: "checkContainerEscape"
+  },
+  {
+    id: 763,
+    category: "Containers",
+    title: "Container No Health Checks",
+    description: "Liveness and readiness probes missing",
+    severity: "low",
+    cwe: "CWE-1088",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement health check endpoints",
+    checkFunction: "checkContainerHealthChecks"
+  },
+  {
+    id: 764,
+    category: "Containers",
+    title: "Service Mesh Not Secured",
+    description: "Istio/Linkerd mTLS not enforced",
+    severity: "high",
+    cwe: "CWE-319",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Enable strict mTLS in service mesh",
+    checkFunction: "checkServiceMeshSecurity"
+  },
+  {
+    id: 765,
+    category: "Containers",
+    title: "Sidecar Injection Not Automatic",
+    description: "Manual sidecar injection inconsistent",
+    severity: "low",
+    cwe: "CWE-1188",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Use automatic sidecar injection",
+    checkFunction: "checkSidecarInjection"
+  },
+
+  // Cloud Configuration (66-85)
+  {
+    id: 766,
+    category: "Cloud Configuration",
+    title: "S3 Bucket Publicly Accessible",
+    description: "AWS S3 bucket ACL allows public access",
+    severity: "critical",
+    cwe: "CWE-732",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Disable public access, use bucket policies",
+    checkFunction: "checkS3PublicAccess"
+  },
+  {
+    id: 767,
+    category: "Cloud Configuration",
+    title: "S3 Bucket Versioning Disabled",
+    description: "No versioning for S3 objects",
+    severity: "medium",
+    cwe: "CWE-404",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Enable S3 versioning for data recovery",
+    checkFunction: "checkS3Versioning"
+  },
+  {
+    id: 768,
+    category: "Cloud Configuration",
+    title: "S3 Bucket Encryption Disabled",
+    description: "Server-side encryption not enabled",
+    severity: "high",
+    cwe: "CWE-311",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Enable S3 default encryption (SSE-S3 or SSE-KMS)",
+    checkFunction: "checkS3Encryption"
+  },
+  {
+    id: 769,
+    category: "Cloud Configuration",
+    title: "CloudTrail Logging Disabled",
+    description: "AWS API calls not logged",
+    severity: "high",
+    cwe: "CWE-778",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Enable CloudTrail in all regions",
+    checkFunction: "checkCloudTrail"
+  },
+  {
+    id: 770,
+    category: "Cloud Configuration",
+    title: "RDS Instance Publicly Accessible",
+    description: "Database exposed to internet",
+    severity: "critical",
+    cwe: "CWE-668",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Place RDS in private subnet, disable public access",
+    checkFunction: "checkRDSPublic"
+  },
+  {
+    id: 771,
+    category: "Cloud Configuration",
+    title: "RDS Encryption Disabled",
+    description: "RDS instance not encrypted at rest",
+    severity: "high",
+    cwe: "CWE-311",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Enable RDS encryption at rest",
+    checkFunction: "checkRDSEncryption"
+  },
+  {
+    id: 772,
+    category: "Cloud Configuration",
+    title: "Security Group Too Permissive",
+    description: "Security group allows 0.0.0.0/0 on sensitive ports",
+    severity: "high",
+    cwe: "CWE-668",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Restrict security groups to specific IPs",
+    checkFunction: "checkSecurityGroups"
+  },
+  {
+    id: 773,
+    category: "Cloud Configuration",
+    title: "IAM User with Root Privileges",
+    description: "IAM users have AdministratorAccess policy",
+    severity: "high",
+    cwe: "CWE-269",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Apply least privilege, avoid AdministratorAccess",
+    checkFunction: "checkIAMPrivileges"
+  },
+  {
+    id: 774,
+    category: "Cloud Configuration",
+    title: "IAM Access Keys Not Rotated",
+    description: "Access keys older than 90 days",
+    severity: "medium",
+    cwe: "CWE-324",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Rotate IAM access keys regularly",
+    checkFunction: "checkIAMKeyRotation"
+  },
+  {
+    id: 775,
+    category: "Cloud Configuration",
+    title: "Root Account MFA Disabled",
+    description: "AWS root account without MFA",
+    severity: "critical",
+    cwe: "CWE-308",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Enable MFA on root account, avoid using root",
+    checkFunction: "checkRootMFA"
+  },
+  {
+    id: 776,
+    category: "Cloud Configuration",
+    title: "VPC Flow Logs Disabled",
+    description: "Network traffic not logged",
+    severity: "medium",
+    cwe: "CWE-778",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Enable VPC Flow Logs",
+    checkFunction: "checkVPCFlowLogs"
+  },
+  {
+    id: 777,
+    category: "Cloud Configuration",
+    title: "AWS Config Not Enabled",
+    description: "Resource configuration changes not tracked",
+    severity: "medium",
+    cwe: "CWE-778",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Enable AWS Config for compliance tracking",
+    checkFunction: "checkAWSConfig"
+  },
+  {
+    id: 778,
+    category: "Cloud Configuration",
+    title: "GuardDuty Not Enabled",
+    description: "No threat detection service active",
+    severity: "medium",
+    cwe: "CWE-1008",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Enable AWS GuardDuty for threat detection",
+    checkFunction: "checkGuardDuty"
+  },
+  {
+    id: 779,
+    category: "Cloud Configuration",
+    title: "Lambda Function Publicly Invokable",
+    description: "Lambda function URL or API Gateway open",
+    severity: "high",
+    cwe: "CWE-306",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Require authentication for Lambda invocations",
+    checkFunction: "checkLambdaPublic"
+  },
+  {
+    id: 780,
+    category: "Cloud Configuration",
+    title: "Serverless Function Timeout Too Long",
+    description: "Lambda timeout set to maximum (15 minutes)",
+    severity: "low",
+    cwe: "CWE-400",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Set appropriate timeouts based on function needs",
+    checkFunction: "checkLambdaTimeout"
+  },
+  {
+    id: 781,
+    category: "Cloud Configuration",
+    title: "Cloud SQL Instance Publicly Accessible",
+    description: "Google Cloud SQL exposed to internet",
+    severity: "critical",
+    cwe: "CWE-668",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Use private IP for Cloud SQL",
+    checkFunction: "checkCloudSQLPublic"
+  },
+  {
+    id: 782,
+    category: "Cloud Configuration",
+    title: "Azure Storage Account Publicly Accessible",
+    description: "Azure Blob storage allows anonymous access",
+    severity: "critical",
+    cwe: "CWE-732",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Disable anonymous access to Azure Storage",
+    checkFunction: "checkAzureStoragePublic"
+  },
+  {
+    id: 783,
+    category: "Cloud Configuration",
+    title: "Cloud KMS Keys Not Rotated",
+    description: "Encryption keys never rotated",
+    severity: "medium",
+    cwe: "CWE-324",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Enable automatic key rotation in KMS",
+    checkFunction: "checkKMSRotation"
+  },
+  {
+    id: 784,
+    category: "Cloud Configuration",
+    title: "Serverless Environment Variables Unencrypted",
+    description: "Lambda env vars contain plaintext secrets",
+    severity: "high",
+    cwe: "CWE-311",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Encrypt environment variables with KMS",
+    checkFunction: "checkServerlessEnvEncryption"
+  },
+  {
+    id: 785,
+    category: "Cloud Configuration",
+    title: "No Cloud Backup Strategy",
+    description: "Critical resources not backed up",
+    severity: "medium",
+    cwe: "CWE-404",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement automated backup strategy",
+    checkFunction: "checkCloudBackup"
+  },
+
+  // Build & Deployment (86-100)
+  {
+    id: 786,
+    category: "Build & Deployment",
+    title: "CI/CD Pipeline Not Secured",
+    description: "Jenkins/GitLab CI accessible without authentication",
+    severity: "critical",
+    cwe: "CWE-306",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Secure CI/CD with authentication and authorization",
+    checkFunction: "checkCICDSecurity"
+  },
+  {
+    id: 787,
+    category: "Build & Deployment",
+    title: "Secrets in CI/CD Logs",
+    description: "Build logs expose credentials",
+    severity: "high",
+    cwe: "CWE-532",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Mask secrets in CI/CD logs",
+    checkFunction: "checkSecretsInLogs"
+  },
+  {
+    id: 788,
+    category: "Build & Deployment",
+    title: "No Code Signing",
+    description: "Build artifacts not signed",
+    severity: "medium",
+    cwe: "CWE-347",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Sign all build artifacts and verify signatures",
+    checkFunction: "checkCodeSigning"
+  },
+  {
+    id: 789,
+    category: "Build & Deployment",
+    title: "Dependency Confusion Attack Possible",
+    description: "Private package names could be hijacked",
+    severity: "high",
+    cwe: "CWE-494",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Use scoped packages, configure private registry first",
+    checkFunction: "checkDependencyConfusion"
+  },
+  {
+    id: 790,
+    category: "Build & Deployment",
+    title: "Build Reproducibility Missing",
+    description: "Builds not reproducible/verifiable",
+    severity: "low",
+    cwe: "CWE-1394",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Implement reproducible builds",
+    checkFunction: "checkReproducibleBuilds"
+  },
+  {
+    id: 791,
+    category: "Build & Deployment",
+    title: "No SBOM Generated",
+    description: "Software Bill of Materials not created",
+    severity: "low",
+    cwe: "CWE-1059",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Generate SBOM for all releases (SPDX, CycloneDX)",
+    checkFunction: "checkSBOM"
+  },
+  {
+    id: 792,
+    category: "Build & Deployment",
+    title: "Deployment Rollback Not Tested",
+    description: "No tested rollback procedure",
+    severity: "medium",
+    cwe: "CWE-1059",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Test rollback procedures regularly",
+    checkFunction: "checkRollbackTested"
+  },
+  {
+    id: 793,
+    category: "Build & Deployment",
+    title: "Blue-Green Deployment Not Used",
+    description: "Deployments cause downtime",
+    severity: "low",
+    cwe: "CWE-1088",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement blue-green or canary deployments",
+    checkFunction: "checkBlueGreenDeployment"
+  },
+  {
+    id: 794,
+    category: "Build & Deployment",
+    title: "Production Deploy from Dev Machine",
+    description: "Manual deployments from developer workstations",
+    severity: "high",
+    cwe: "CWE-1188",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Only deploy from CI/CD pipeline",
+    checkFunction: "checkManualDeploy"
+  },
+  {
+    id: 795,
+    category: "Build & Deployment",
+    title: "No Deployment Approval Process",
+    description: "Automated deployment without human approval",
+    severity: "medium",
+    cwe: "CWE-1188",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Require approvals for production deployments",
+    checkFunction: "checkDeploymentApproval"
+  },
+  {
+    id: 796,
+    category: "Build & Deployment",
+    title: "Build Environment Not Isolated",
+    description: "Build servers have prod access",
+    severity: "high",
+    cwe: "CWE-668",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Isolate build environment from production",
+    checkFunction: "checkBuildIsolation"
+  },
+  {
+    id: 797,
+    category: "Build & Deployment",
+    title: "Artifact Repository Unsecured",
+    description: "Nexus/Artifactory accessible without auth",
+    severity: "critical",
+    cwe: "CWE-306",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Secure artifact repository with authentication",
+    checkFunction: "checkArtifactRepoSecurity"
+  },
+  {
+    id: 798,
+    category: "Build & Deployment",
+    title: "Infrastructure as Code Not Scanned",
+    description: "Terraform/CloudFormation templates not validated",
+    severity: "medium",
+    cwe: "CWE-1188",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Scan IaC with tfsec, Checkov before deployment",
+    checkFunction: "checkIaCScan"
+  },
+  {
+    id: 799,
+    category: "Build & Deployment",
+    title: "Secrets in Infrastructure Code",
+    description: "Passwords hardcoded in Terraform",
+    severity: "critical",
+    cwe: "CWE-798",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use secrets management, never hardcode credentials",
+    checkFunction: "checkSecretsInIaC"
+  },
+  {
+    id: 800,
+    category: "Build & Deployment",
+    title: "No Security Testing in Pipeline",
+    description: "SAST/DAST not integrated in CI/CD",
+    severity: "high",
+    cwe: "CWE-1008",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Integrate security scanning in CI/CD pipeline",
+    checkFunction: "checkSecurityInPipeline"
+  }
+];
+
+// Export for use in scanner
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { category8_ConfigurationDeployment };
+}

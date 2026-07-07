@@ -1,0 +1,1122 @@
+// ========================================
+// SECURITY MISCONFIGURATIONS DATABASE
+// Category 4: Access Control
+// Total: 100 Misconfigurations
+// ========================================
+
+const category4_AccessControl = [
+  // Authorization & Permissions (1-30)
+  {
+    id: 301,
+    category: "Authorization",
+    title: "Broken Object Level Authorization",
+    description: "Users can access objects belonging to other users",
+    severity: "critical",
+    cwe: "CWE-639",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Validate user ownership/permission for every object access",
+    checkFunction: "checkObjectLevelAuth"
+  },
+  {
+    id: 302,
+    category: "Authorization",
+    title: "Insecure Direct Object Reference (IDOR)",
+    description: "Sequential IDs allow unauthorized access",
+    severity: "critical",
+    cwe: "CWE-639",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Use UUIDs, validate authorization, implement indirect references",
+    checkFunction: "checkIDOR"
+  },
+  {
+    id: 303,
+    category: "Authorization",
+    title: "Missing Function Level Access Control",
+    description: "Functions accessible without proper authorization",
+    severity: "critical",
+    cwe: "CWE-285",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement authorization checks on all functions/endpoints",
+    checkFunction: "checkFunctionLevelAuth"
+  },
+  {
+    id: 304,
+    category: "Authorization",
+    title: "Forced Browsing",
+    description: "Unauthorized pages accessible via direct URL",
+    severity: "high",
+    cwe: "CWE-425",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement server-side authorization for all pages",
+    checkFunction: "checkForcedBrowsing"
+  },
+  {
+    id: 305,
+    category: "Authorization",
+    title: "Privilege Escalation - Horizontal",
+    description: "Users can access data of other users at same privilege level",
+    severity: "critical",
+    cwe: "CWE-639",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Validate user identity matches resource owner",
+    checkFunction: "checkHorizontalEscalation"
+  },
+  {
+    id: 306,
+    category: "Authorization",
+    title: "Privilege Escalation - Vertical",
+    description: "Regular users can access admin functions",
+    severity: "critical",
+    cwe: "CWE-269",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement role-based access control, validate roles server-side",
+    checkFunction: "checkVerticalEscalation"
+  },
+  {
+    id: 307,
+    category: "Authorization",
+    title: "No Authorization on API Endpoints",
+    description: "API endpoints lack authorization checks",
+    severity: "critical",
+    cwe: "CWE-862",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Require authentication and authorization for all API endpoints",
+    checkFunction: "checkAPIAuthorization"
+  },
+  {
+    id: 308,
+    category: "Authorization",
+    title: "Client-Side Authorization Only",
+    description: "Authorization enforced only in JavaScript",
+    severity: "critical",
+    cwe: "CWE-602",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Always enforce authorization server-side",
+    checkFunction: "checkClientSideAuth"
+  },
+  {
+    id: 309,
+    category: "Authorization",
+    title: "Hidden Fields Control Access",
+    description: "Hidden form fields determine authorization",
+    severity: "high",
+    cwe: "CWE-639",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Validate authorization server-side, never trust client data",
+    checkFunction: "checkHiddenFieldAuth"
+  },
+  {
+    id: 310,
+    category: "Authorization",
+    title: "Role/Permission in Cookie",
+    description: "User roles stored in client-side cookies",
+    severity: "critical",
+    cwe: "CWE-565",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Store roles server-side, validate on every request",
+    checkFunction: "checkRoleInCookie"
+  },
+  {
+    id: 311,
+    category: "Authorization",
+    title: "Role/Permission in JWT Claim",
+    description: "Roles in JWT without proper validation",
+    severity: "high",
+    cwe: "CWE-285",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Verify JWT signature, validate roles against server records",
+    checkFunction: "checkRoleInJWT"
+  },
+  {
+    id: 312,
+    category: "Authorization",
+    title: "Missing Authorization on File Downloads",
+    description: "Files downloadable without authorization check",
+    severity: "critical",
+    cwe: "CWE-552",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Validate user authorization before serving files",
+    checkFunction: "checkFileDownloadAuth"
+  },
+  {
+    id: 313,
+    category: "Authorization",
+    title: "Missing Authorization on File Uploads",
+    description: "Anyone can upload files without authorization",
+    severity: "high",
+    cwe: "CWE-862",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Require authentication and validate upload permissions",
+    checkFunction: "checkFileUploadAuth"
+  },
+  {
+    id: 314,
+    category: "Authorization",
+    title: "Parameter Tampering for Authorization",
+    description: "Changing URL/form parameters bypasses authorization",
+    severity: "high",
+    cwe: "CWE-472",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Never trust client parameters for authorization decisions",
+    checkFunction: "checkParameterTampering"
+  },
+  {
+    id: 315,
+    category: "Authorization",
+    title: "Missing Authorization on DELETE Operations",
+    description: "Delete operations not checking ownership",
+    severity: "critical",
+    cwe: "CWE-862",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Validate user can delete resource before deletion",
+    checkFunction: "checkDeleteAuthorization"
+  },
+  {
+    id: 316,
+    category: "Authorization",
+    title: "Missing Authorization on UPDATE Operations",
+    description: "Update operations not validating permissions",
+    severity: "critical",
+    cwe: "CWE-862",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Validate update permissions before modifying data",
+    checkFunction: "checkUpdateAuthorization"
+  },
+  {
+    id: 317,
+    category: "Authorization",
+    title: "Inconsistent Authorization Checks",
+    description: "Authorization enforced inconsistently across endpoints",
+    severity: "high",
+    cwe: "CWE-863",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Use centralized authorization middleware",
+    checkFunction: "checkInconsistentAuth"
+  },
+  {
+    id: 318,
+    category: "Authorization",
+    title: "No Authorization on Admin Panel",
+    description: "Admin interface accessible without proper checks",
+    severity: "critical",
+    cwe: "CWE-862",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement strict authentication and authorization for admin areas",
+    checkFunction: "checkAdminAuth"
+  },
+  {
+    id: 319,
+    category: "Authorization",
+    title: "Default Deny Not Implemented",
+    description: "Access granted by default, not denied",
+    severity: "high",
+    cwe: "CWE-276",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement whitelist approach - deny by default, allow explicitly",
+    checkFunction: "checkDefaultDeny"
+  },
+  {
+    id: 320,
+    category: "Authorization",
+    title: "Overly Permissive CORS",
+    description: "CORS allows access from any origin",
+    severity: "high",
+    cwe: "CWE-942",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Restrict CORS to specific trusted origins",
+    checkFunction: "checkPermissiveCORS"
+  },
+  {
+    id: 321,
+    category: "Authorization",
+    title: "Directory Listing Enabled",
+    description: "Web server shows directory contents",
+    severity: "medium",
+    cwe: "CWE-548",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Disable directory listing on web server",
+    checkFunction: "checkDirectoryListing"
+  },
+  {
+    id: 322,
+    category: "Authorization",
+    title: "Backup Files Accessible",
+    description: "Backup files accessible via web (.bak, .old, etc.)",
+    severity: "high",
+    cwe: "CWE-530",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Remove backup files from web root, block access in web server config",
+    checkFunction: "checkBackupFiles"
+  },
+  {
+    id: 323,
+    category: "Authorization",
+    title: "Source Code Accessible",
+    description: "Source code files accessible via web",
+    severity: "critical",
+    cwe: "CWE-540",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Never deploy source code to web root, use .gitignore",
+    checkFunction: "checkSourceCodeAccess"
+  },
+  {
+    id: 324,
+    category: "Authorization",
+    title: "Configuration Files Accessible",
+    description: "Config files (.env, config.php) publicly accessible",
+    severity: "critical",
+    cwe: "CWE-552",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Store config files outside web root, block access via web server",
+    checkFunction: "checkConfigFileAccess"
+  },
+  {
+    id: 325,
+    category: "Authorization",
+    title: "Log Files Accessible",
+    description: "Application logs accessible via web",
+    severity: "high",
+    cwe: "CWE-532",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Store logs outside web root with restricted permissions",
+    checkFunction: "checkLogFileAccess"
+  },
+  {
+    id: 326,
+    category: "Authorization",
+    title: "Sensitive Data in URL",
+    description: "Sensitive data passed in URL accessible in logs/history",
+    severity: "high",
+    cwe: "CWE-598",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Use POST method for sensitive data, never GET",
+    checkFunction: "checkSensitiveDataURL"
+  },
+  {
+    id: 327,
+    category: "Authorization",
+    title: "Public Bucket/Storage Misconfiguration",
+    description: "Cloud storage buckets publicly readable",
+    severity: "critical",
+    cwe: "CWE-732",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Set proper access controls on cloud storage, use least privilege",
+    checkFunction: "checkPublicStorage"
+  },
+  {
+    id: 328,
+    category: "Authorization",
+    title: "GraphQL Query Depth Not Limited",
+    description: "GraphQL allows deeply nested queries",
+    severity: "medium",
+    cwe: "CWE-400",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement query depth limiting in GraphQL",
+    checkFunction: "checkGraphQLDepth"
+  },
+  {
+    id: 329,
+    category: "Authorization",
+    title: "GraphQL Introspection Enabled",
+    description: "GraphQL schema introspection available in production",
+    severity: "medium",
+    cwe: "CWE-200",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Disable GraphQL introspection in production",
+    checkFunction: "checkGraphQLIntrospection"
+  },
+  {
+    id: 330,
+    category: "Authorization",
+    title: "Method Override Vulnerability",
+    description: "HTTP method override headers can bypass restrictions",
+    severity: "high",
+    cwe: "CWE-650",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Validate HTTP method matches authorization requirements",
+    checkFunction: "checkMethodOverride"
+  },
+
+  // Role-Based Access Control (31-50)
+  {
+    id: 331,
+    category: "RBAC",
+    title: "No Role-Based Access Control",
+    description: "Application lacks proper RBAC implementation",
+    severity: "high",
+    cwe: "CWE-284",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement comprehensive RBAC system",
+    checkFunction: "checkRBACImplementation"
+  },
+  {
+    id: 332,
+    category: "RBAC",
+    title: "Hard-Coded Roles",
+    description: "Roles and permissions hard-coded in application",
+    severity: "medium",
+    cwe: "CWE-1188",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Use database-driven role management",
+    checkFunction: "checkHardCodedRoles"
+  },
+  {
+    id: 333,
+    category: "RBAC",
+    title: "Overly Permissive Default Role",
+    description: "Default user role has excessive permissions",
+    severity: "high",
+    cwe: "CWE-276",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Apply principle of least privilege to default roles",
+    checkFunction: "checkDefaultRolePermissions"
+  },
+  {
+    id: 334,
+    category: "RBAC",
+    title: "Role Assignment Without Approval",
+    description: "Users can assign themselves elevated roles",
+    severity: "critical",
+    cwe: "CWE-269",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Require admin approval for role changes",
+    checkFunction: "checkRoleAssignment"
+  },
+  {
+    id: 335,
+    category: "RBAC",
+    title: "No Role Hierarchy",
+    description: "System lacks role inheritance/hierarchy",
+    severity: "low",
+    cwe: "CWE-284",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement role hierarchy for easier management",
+    checkFunction: "checkRoleHierarchy"
+  },
+  {
+    id: 336,
+    category: "RBAC",
+    title: "No Temporal Restrictions",
+    description: "No time-based access restrictions",
+    severity: "low",
+    cwe: "CWE-284",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement time-based access control where appropriate",
+    checkFunction: "checkTemporalRestrictions"
+  },
+  {
+    id: 337,
+    category: "RBAC",
+    title: "No Context-Based Access Control",
+    description: "Access not based on context (location, device, time)",
+    severity: "low",
+    cwe: "CWE-284",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Consider implementing attribute-based access control (ABAC)",
+    checkFunction: "checkContextBasedAccess"
+  },
+  {
+    id: 338,
+    category: "RBAC",
+    title: "Orphaned User Accounts",
+    description: "Inactive user accounts not disabled",
+    severity: "medium",
+    cwe: "CWE-263",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement account expiration and regular access reviews",
+    checkFunction: "checkOrphanedAccounts"
+  },
+  {
+    id: 339,
+    category: "RBAC",
+    title: "Shared Accounts",
+    description: "Multiple users share same account credentials",
+    severity: "high",
+    cwe: "CWE-284",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Require individual accounts for each user",
+    checkFunction: "checkSharedAccounts"
+  },
+  {
+    id: 340,
+    category: "RBAC",
+    title: "Guest/Anonymous Access Too Permissive",
+    description: "Unauthenticated users have excessive access",
+    severity: "high",
+    cwe: "CWE-306",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Minimize guest access, require authentication for sensitive functions",
+    checkFunction: "checkGuestAccess"
+  },
+  {
+    id: 341,
+    category: "RBAC",
+    title: "No Separation of Duties",
+    description: "Single user can perform conflicting actions",
+    severity: "medium",
+    cwe: "CWE-841",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement separation of duties for critical operations",
+    checkFunction: "checkSeparationOfDuties"
+  },
+  {
+    id: 342,
+    category: "RBAC",
+    title: "No Least Privilege Principle",
+    description: "Users granted more permissions than necessary",
+    severity: "high",
+    cwe: "CWE-250",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Apply principle of least privilege to all user roles",
+    checkFunction: "checkLeastPrivilege"
+  },
+  {
+    id: 343,
+    category: "RBAC",
+    title: "No Permission Revocation on Role Change",
+    description: "Old permissions persist when role changes",
+    severity: "high",
+    cwe: "CWE-613",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Immediately revoke old permissions on role change",
+    checkFunction: "checkPermissionRevocation"
+  },
+  {
+    id: 344,
+    category: "RBAC",
+    title: "No Access Review Process",
+    description: "User permissions never reviewed or audited",
+    severity: "medium",
+    cwe: "CWE-284",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement periodic access reviews",
+    checkFunction: "checkAccessReview"
+  },
+  {
+    id: 345,
+    category: "RBAC",
+    title: "Multiple Admin Accounts",
+    description: "Numerous admin accounts increase attack surface",
+    severity: "medium",
+    cwe: "CWE-250",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Limit number of admin accounts, use privilege escalation",
+    checkFunction: "checkMultipleAdmins"
+  },
+  {
+    id: 346,
+    category: "RBAC",
+    title: "No Break-Glass Procedure",
+    description: "No emergency access procedure for critical situations",
+    severity: "low",
+    cwe: "CWE-284",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement monitored emergency access procedure",
+    checkFunction: "checkBreakGlass"
+  },
+  {
+    id: 347,
+    category: "RBAC",
+    title: "Service Accounts with Excessive Permissions",
+    description: "Service/API accounts have more access than needed",
+    severity: "high",
+    cwe: "CWE-250",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Apply least privilege to service accounts",
+    checkFunction: "checkServiceAccountPerms"
+  },
+  {
+    id: 348,
+    category: "RBAC",
+    title: "No Audit Trail for Permission Changes",
+    description: "Changes to permissions not logged",
+    severity: "medium",
+    cwe: "CWE-778",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Log all permission and role changes with user identification",
+    checkFunction: "checkPermissionAudit"
+  },
+  {
+    id: 349,
+    category: "RBAC",
+    title: "Group Membership Not Validated",
+    description: "Group/role membership not regularly validated",
+    severity: "medium",
+    cwe: "CWE-284",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement regular group membership validation",
+    checkFunction: "checkGroupMembership"
+  },
+  {
+    id: 350,
+    category: "RBAC",
+    title: "No Just-In-Time Access",
+    description: "Privileged access permanent instead of temporary",
+    severity: "low",
+    cwe: "CWE-250",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Consider implementing just-in-time privileged access",
+    checkFunction: "checkJITAccess"
+  },
+
+  // Path Traversal & File Access (51-70)
+  {
+    id: 351,
+    category: "Path Traversal",
+    title: "Directory Traversal Vulnerability",
+    description: "User input allows accessing files outside intended directory",
+    severity: "critical",
+    cwe: "CWE-22",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Validate and sanitize file paths, use whitelist of allowed files",
+    checkFunction: "checkPathTraversal"
+  },
+  {
+    id: 352,
+    category: "Path Traversal",
+    title: "Absolute Path Traversal",
+    description: "Absolute file paths accepted from user input",
+    severity: "critical",
+    cwe: "CWE-36",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Reject absolute paths, use relative paths within constrained directory",
+    checkFunction: "checkAbsolutePathTraversal"
+  },
+  {
+    id: 353,
+    category: "Path Traversal",
+    title: "File Inclusion Vulnerability",
+    description: "User input directly included in file operations",
+    severity: "critical",
+    cwe: "CWE-98",
+    owasp: "A03:2021 - Injection",
+    recommendation: "Validate file names against whitelist, never trust user input for includes",
+    checkFunction: "checkFileInclusion"
+  },
+  {
+    id: 354,
+    category: "Path Traversal",
+    title: "Local File Inclusion (LFI)",
+    description: "Local files can be included via user input",
+    severity: "critical",
+    cwe: "CWE-98",
+    owasp: "A03:2021 - Injection",
+    recommendation: "Use whitelist for allowed includes, avoid dynamic includes",
+    checkFunction: "checkLFI"
+  },
+  {
+    id: 355,
+    category: "Path Traversal",
+    title: "Remote File Inclusion (RFI)",
+    description: "Remote files can be included via URLs",
+    severity: "critical",
+    cwe: "CWE-98",
+    owasp: "A03:2021 - Injection",
+    recommendation: "Disable remote file inclusion in PHP/application settings",
+    checkFunction: "checkRFI"
+  },
+  {
+    id: 356,
+    category: "Path Traversal",
+    title: "Zip Slip Vulnerability",
+    description: "Archive extraction allows path traversal",
+    severity: "high",
+    cwe: "CWE-22",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Validate all extracted file paths before writing",
+    checkFunction: "checkZipSlip"
+  },
+  {
+    id: 357,
+    category: "Path Traversal",
+    title: "Symlink Following",
+    description: "Application follows symbolic links to restricted files",
+    severity: "high",
+    cwe: "CWE-59",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Don't follow symlinks or verify target is within allowed directory",
+    checkFunction: "checkSymlinkFollowing"
+  },
+  {
+    id: 358,
+    category: "Path Traversal",
+    title: "File Upload Path Not Sanitized",
+    description: "Uploaded file paths not properly validated",
+    severity: "high",
+    cwe: "CWE-22",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Generate safe file names server-side, ignore client-provided names",
+    checkFunction: "checkUploadPathSanitization"
+  },
+  {
+    id: 359,
+    category: "Path Traversal",
+    title: "Unrestricted File Download",
+    description: "Any file can be downloaded via parameter manipulation",
+    severity: "critical",
+    cwe: "CWE-22",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Whitelist downloadable files, validate authorization",
+    checkFunction: "checkUnrestrictedDownload"
+  },
+  {
+    id: 360,
+    category: "Path Traversal",
+    title: "Server-Side Include (SSI) Injection",
+    description: "SSI directives can be injected via user input",
+    severity: "high",
+    cwe: "CWE-97",
+    owasp: "A03:2021 - Injection",
+    recommendation: "Disable SSI or validate user input strictly",
+    checkFunction: "checkSSIInjection"
+  },
+  {
+    id: 361,
+    category: "Path Traversal",
+    title: "Template Path Injection",
+    description: "User input controls template file paths",
+    severity: "high",
+    cwe: "CWE-22",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Use template IDs instead of file paths, validate against whitelist",
+    checkFunction: "checkTemplatePathInjection"
+  },
+  {
+    id: 362,
+    category: "Path Traversal",
+    title: "Language File Path Traversal",
+    description: "Language/locale parameters allow path traversal",
+    severity: "medium",
+    cwe: "CWE-22",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Whitelist allowed language codes, validate file existence",
+    checkFunction: "checkLanguagePathTraversal"
+  },
+  {
+    id: 363,
+    category: "Path Traversal",
+    title: "Log File Path Injection",
+    description: "Log file paths controllable via user input",
+    severity: "high",
+    cwe: "CWE-73",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Hard-code log file paths, never use user input",
+    checkFunction: "checkLogPathInjection"
+  },
+  {
+    id: 364,
+    category: "Path Traversal",
+    title: "Database File Path Exposure",
+    description: "Database file paths accessible or manipulable",
+    severity: "critical",
+    cwe: "CWE-22",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Store database files outside web root with proper permissions",
+    checkFunction: "checkDatabaseFilePath"
+  },
+  {
+    id: 365,
+    category: "Path Traversal",
+    title: "Temporary File Predictable Paths",
+    description: "Temporary files created with predictable names/locations",
+    severity: "medium",
+    cwe: "CWE-377",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Use secure random names for temp files, proper permissions",
+    checkFunction: "checkTempFilePaths"
+  },
+  {
+    id: 366,
+    category: "Path Traversal",
+    title: "File Permission Too Permissive",
+    description: "Files created with overly permissive permissions",
+    severity: "medium",
+    cwe: "CWE-732",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Set restrictive file permissions (e.g., 600 for sensitive files)",
+    checkFunction: "checkFilePermissions"
+  },
+  {
+    id: 367,
+    category: "Path Traversal",
+    title: "Race Condition in File Access (TOCTOU)",
+    description: "Time-of-check to time-of-use race condition",
+    severity: "medium",
+    cwe: "CWE-367",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Use atomic file operations, avoid check-then-act patterns",
+    checkFunction: "checkTOCTOU"
+  },
+  {
+    id: 368,
+    category: "Path Traversal",
+    title: "File Access Without Locking",
+    description: "Concurrent file access without proper locking",
+    severity: "low",
+    cwe: "CWE-362",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement file locking for concurrent access",
+    checkFunction: "checkFileLocking"
+  },
+  {
+    id: 369,
+    category: "Path Traversal",
+    title: "Sensitive Files in Web Root",
+    description: "Configuration, backup, or source files in accessible directory",
+    severity: "critical",
+    cwe: "CWE-552",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Store sensitive files outside web root",
+    checkFunction: "checkSensitiveFilesWebRoot"
+  },
+  {
+    id: 370,
+    category: "Path Traversal",
+    title: "Git Directory Accessible",
+    description: ".git directory accessible via web",
+    severity: "critical",
+    cwe: "CWE-541",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Block access to .git directory in web server config",
+    checkFunction: "checkGitDirectoryAccess"
+  },
+
+  // Multi-Tenancy (71-85)
+  {
+    id: 371,
+    category: "Multi-Tenancy",
+    title: "Tenant Isolation Failure",
+    description: "Data from one tenant accessible to another",
+    severity: "critical",
+    cwe: "CWE-668",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement strict tenant ID validation in all queries",
+    checkFunction: "checkTenantIsolation"
+  },
+  {
+    id: 372,
+    category: "Multi-Tenancy",
+    title: "Tenant ID in Client Code",
+    description: "Tenant identifier controlled by client",
+    severity: "critical",
+    cwe: "CWE-639",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Derive tenant ID from authenticated session server-side",
+    checkFunction: "checkTenantIDClient"
+  },
+  {
+    id: 373,
+    category: "Multi-Tenancy",
+    title: "Cross-Tenant Data Leakage",
+    description: "Shared resources leak data between tenants",
+    severity: "critical",
+    cwe: "CWE-668",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Ensure complete data isolation per tenant",
+    checkFunction: "checkCrossTenantLeakage"
+  },
+  {
+    id: 374,
+    category: "Multi-Tenancy",
+    title: "Subdomain Takeover Possible",
+    description: "Tenant subdomains vulnerable to takeover",
+    severity: "high",
+    cwe: "CWE-350",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Monitor and clean up unused DNS records",
+    checkFunction: "checkSubdomainTakeover"
+  },
+  {
+    id: 375,
+    category: "Multi-Tenancy",
+    title: "Tenant Resource Limits Not Enforced",
+    description: "No limits on tenant resource consumption",
+    severity: "medium",
+    cwe: "CWE-770",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement per-tenant quotas and rate limits",
+    checkFunction: "checkTenantResourceLimits"
+  },
+  {
+    id: 376,
+    category: "Multi-Tenancy",
+    title: "Shared Database Without Tenant ID",
+    description: "Database queries don't filter by tenant",
+    severity: "critical",
+    cwe: "CWE-668",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Add tenant_id to all tables, include in all WHERE clauses",
+    checkFunction: "checkSharedDatabaseTenantID"
+  },
+  {
+    id: 377,
+    category: "Multi-Tenancy",
+    title: "No Tenant Context in Background Jobs",
+    description: "Background jobs don't maintain tenant context",
+    severity: "high",
+    cwe: "CWE-668",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Pass tenant context to all background jobs",
+    checkFunction: "checkBackgroundJobTenant"
+  },
+  {
+    id: 378,
+    category: "Multi-Tenancy",
+    title: "Cross-Tenant API Access",
+    description: "API endpoints don't enforce tenant boundaries",
+    severity: "critical",
+    cwe: "CWE-668",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Validate tenant ID on every API request",
+    checkFunction: "checkCrossTenantAPI"
+  },
+  {
+    id: 379,
+    category: "Multi-Tenancy",
+    title: "Tenant Enumeration Possible",
+    description: "Attackers can discover tenant identifiers",
+    severity: "low",
+    cwe: "CWE-200",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Use UUIDs for tenant IDs, don't expose in URLs",
+    checkFunction: "checkTenantEnumeration"
+  },
+  {
+    id: 380,
+    category: "Multi-Tenancy",
+    title: "Shared Cache Without Tenant Isolation",
+    description: "Cache keys don't include tenant ID",
+    severity: "high",
+    cwe: "CWE-668",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Include tenant ID in all cache keys",
+    checkFunction: "checkSharedCacheTenant"
+  },
+  {
+    id: 381,
+    category: "Multi-Tenancy",
+    title: "Global Admin Access to All Tenants",
+    description: "Super admin can access any tenant data",
+    severity: "medium",
+    cwe: "CWE-250",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement explicit tenant switching with audit logging",
+    checkFunction: "checkGlobalAdminAccess"
+  },
+  {
+    id: 382,
+    category: "Multi-Tenancy",
+    title: "Tenant Creation Without Verification",
+    description: "Anyone can create tenant accounts",
+    severity: "medium",
+    cwe: "CWE-862",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Require email verification and approval for tenant creation",
+    checkFunction: "checkTenantCreationVerification"
+  },
+  {
+    id: 383,
+    category: "Multi-Tenancy",
+    title: "No Tenant Data Export/Delete",
+    description: "Tenants cannot export or delete their data",
+    severity: "medium",
+    cwe: "CWE-284",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement GDPR-compliant data export and deletion",
+    checkFunction: "checkTenantDataExportDelete"
+  },
+  {
+    id: 384,
+    category: "Multi-Tenancy",
+    title: "Cross-Tenant WebSocket Messages",
+    description: "WebSocket messages not isolated by tenant",
+    severity: "high",
+    cwe: "CWE-668",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Validate tenant context for all WebSocket communications",
+    checkFunction: "checkWebSocketTenant"
+  },
+  {
+    id: 385,
+    category: "Multi-Tenancy",
+    title: "Tenant Context Lost in Async Operations",
+    description: "Async operations don't preserve tenant context",
+    severity: "high",
+    cwe: "CWE-668",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Use async-local storage or context propagation",
+    checkFunction: "checkAsyncTenantContext"
+  },
+
+  // Rate Limiting & Abuse Prevention (86-100)
+  {
+    id: 386,
+    category: "Rate Limiting",
+    title: "No Rate Limiting on API",
+    description: "API endpoints lack rate limiting",
+    severity: "high",
+    cwe: "CWE-770",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement per-user/IP rate limiting on all endpoints",
+    checkFunction: "checkAPIRateLimit"
+  },
+  {
+    id: 387,
+    category: "Rate Limiting",
+    title: "No Rate Limiting on Login",
+    description: "Login attempts not rate limited",
+    severity: "high",
+    cwe: "CWE-307",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Implement rate limiting and account lockout for failed logins",
+    checkFunction: "checkLoginRateLimit"
+  },
+  {
+    id: 388,
+    category: "Rate Limiting",
+    title: "No Rate Limiting on Password Reset",
+    description: "Password reset can be requested repeatedly",
+    severity: "medium",
+    cwe: "CWE-307",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Rate limit password reset requests per email/IP",
+    checkFunction: "checkPasswordResetRateLimit"
+  },
+  {
+    id: 389,
+    category: "Rate Limiting",
+    title: "No Rate Limiting on Registration",
+    description: "Account creation not rate limited",
+    severity: "medium",
+    cwe: "CWE-770",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement rate limiting and CAPTCHA for registration",
+    checkFunction: "checkRegistrationRateLimit"
+  },
+  {
+    id: 390,
+    category: "Rate Limiting",
+    title: "No Rate Limiting on File Upload",
+    description: "File uploads can be performed rapidly",
+    severity: "medium",
+    cwe: "CWE-770",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Rate limit file uploads per user/session",
+    checkFunction: "checkUploadRateLimit"
+  },
+  {
+    id: 391,
+    category: "Rate Limiting",
+    title: "No Rate Limiting on Search",
+    description: "Search queries not rate limited",
+    severity: "low",
+    cwe: "CWE-770",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement rate limiting on expensive search operations",
+    checkFunction: "checkSearchRateLimit"
+  },
+  {
+    id: 392,
+    category: "Rate Limiting",
+    title: "Rate Limit Bypass via IP Rotation",
+    description: "Rate limiting only by IP, easily bypassed",
+    severity: "medium",
+    cwe: "CWE-307",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Combine IP, user account, and session-based rate limiting",
+    checkFunction: "checkRateLimitBypass"
+  },
+  {
+    id: 393,
+    category: "Rate Limiting",
+    title: "No CAPTCHA on Sensitive Operations",
+    description: "Automated abuse possible on critical functions",
+    severity: "medium",
+    cwe: "CWE-799",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement CAPTCHA for login, registration, password reset",
+    checkFunction: "checkCAPTCHA"
+  },
+  {
+    id: 394,
+    category: "Rate Limiting",
+    title: "No Protection Against Scraping",
+    description: "Content can be scraped without restriction",
+    severity: "low",
+    cwe: "CWE-799",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement rate limiting and anti-scraping measures",
+    checkFunction: "checkScrapingProtection"
+  },
+  {
+    id: 395,
+    category: "Rate Limiting",
+    title: "No Concurrent Request Limiting",
+    description: "Users can make unlimited concurrent requests",
+    severity: "medium",
+    cwe: "CWE-770",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Limit concurrent requests per user/session",
+    checkFunction: "checkConcurrentRequests"
+  },
+  {
+    id: 396,
+    category: "Rate Limiting",
+    title: "No Resource Quotas",
+    description: "No limits on user storage, bandwidth, etc.",
+    severity: "medium",
+    cwe: "CWE-770",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement per-user resource quotas",
+    checkFunction: "checkResourceQuotas"
+  },
+  {
+    id: 397,
+    category: "Rate Limiting",
+    title: "Account Enumeration Possible",
+    description: "Attackers can enumerate valid usernames/emails",
+    severity: "medium",
+    cwe: "CWE-204",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Return generic messages, implement timing attack protection",
+    checkFunction: "checkAccountEnumeration"
+  },
+  {
+    id: 398,
+    category: "Rate Limiting",
+    title: "User Enumeration via Timing",
+    description: "Response timing reveals valid vs invalid users",
+    severity: "low",
+    cwe: "CWE-208",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Normalize response times for authentication",
+    checkFunction: "checkTimingEnumeration"
+  },
+  {
+    id: 399,
+    category: "Rate Limiting",
+    title: "No Distributed Rate Limiting",
+    description: "Rate limiting not effective across multiple servers",
+    severity: "medium",
+    cwe: "CWE-770",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Use centralized rate limiting (Redis, etc.)",
+    checkFunction: "checkDistributedRateLimit"
+  },
+  {
+    id: 400,
+    category: "Rate Limiting",
+    title: "Rate Limit Headers Not Exposed",
+    description: "Clients don't know their rate limit status",
+    severity: "low",
+    cwe: "CWE-778",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Include X-RateLimit-* headers in API responses",
+    checkFunction: "checkRateLimitHeaders"
+  }
+];
+
+// Export for use in scanner
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { category4_AccessControl };
+}

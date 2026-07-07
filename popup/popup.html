@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inspectra</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-row">
+        <div>
+          <h1>Inspectra</h1>
+          <p class="tagline">Web Security Configuration Auditor</p>
+        </div>
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle theme">
+          Theme
+        </button>
+      </div>
+    </header>
+
+    <div class="auth-section" id="authSection" style="display: none;">
+      <label class="auth-check">
+        <input type="checkbox" id="authConfirm" />
+        <span>
+          I confirm I am authorized to scan <strong id="scanHost">this site</strong>.
+        </span>
+      </label>
+      <p class="auth-hint">Scanning without permission may be illegal or against policy.</p>
+    </div>
+    
+    <div class="scan-section">
+      <button id="startScan" class="btn-primary">Start Security Scan</button>
+      <div id="progress" class="progress-bar" style="display: none;">
+        <div id="progressFill" class="progress-fill"></div>
+        <span id="progressText">0%</span>
+      </div>
+      <div id="progressMeta" class="progress-meta" style="display: none;">
+        <span id="progressLabel">Preparing scan…</span>
+      </div>
+    </div>
+
+    <div id="results" class="results-section" style="display: none;">
+      <div class="summary">
+        <h2>Scan Summary</h2>
+        <div class="stats">
+          <div class="stat critical">
+            <span class="stat-number" id="criticalCount">0</span>
+            <span class="stat-label">Critical</span>
+          </div>
+          <div class="stat high">
+            <span class="stat-number" id="highCount">0</span>
+            <span class="stat-label">High</span>
+          </div>
+          <div class="stat medium">
+            <span class="stat-number" id="mediumCount">0</span>
+            <span class="stat-label">Medium</span>
+          </div>
+          <div class="stat low">
+            <span class="stat-number" id="lowCount">0</span>
+            <span class="stat-label">Low</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="issues-container">
+        <h3>Security Issues Found</h3>
+        <div id="issuesList"></div>
+      </div>
+
+      <div class="actions">
+        <button id="exportReport" class="btn-secondary">Export Report</button>
+        <button id="rescan" class="btn-secondary">Rescan</button>
+      </div>
+    </div>
+
+    <div id="loading" class="loading" style="display: none;">
+      <div class="spinner"></div>
+      <p id="loadingText">Scanning website…</p>
+    </div>
+
+    <div id="toast" class="toast" style="display: none;" role="status" aria-live="polite"></div>
+  </div>
+
+    <script src="../data/misconfigurations-category1.js"></script>
+    <script src="../data/misconfigurations-category2.js"></script>
+    <script src="../data/misconfigurations-category3.js"></script>
+    <script src="../data/misconfigurations-category4.js"></script>
+    <script src="../data/misconfigurations-category5.js"></script>
+    <script src="../data/misconfigurations-category6.js"></script>
+    <script src="../data/misconfigurations-category7.js"></script>
+    <script src="../data/misconfigurations-category8.js"></script>
+    <script src="../data/misconfigurations-category9.js"></script>
+    <script src="../data/misconfigurations-category10.js"></script>
+    <script src="../data/misconfigurations-index.js"></script>
+    <script src="popup.js"></script>
+</body>
+</html>

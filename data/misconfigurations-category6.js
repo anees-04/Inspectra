@@ -1,0 +1,1122 @@
+// ========================================
+// SECURITY MISCONFIGURATIONS DATABASE
+// Category 6: API & Web Services Security
+// Total: 100 Misconfigurations
+// ========================================
+
+const category6_APIWebServices = [
+  // REST API Security (1-30)
+  {
+    id: 501,
+    category: "REST API",
+    title: "No API Authentication",
+    description: "REST API endpoints accessible without authentication",
+    severity: "critical",
+    cwe: "CWE-306",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Implement OAuth2, JWT, or API key authentication",
+    checkFunction: "checkAPIAuthentication"
+  },
+  {
+    id: 502,
+    category: "REST API",
+    title: "API Keys in URL Parameters",
+    description: "API keys passed in query strings",
+    severity: "high",
+    cwe: "CWE-598",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use Authorization header for API keys",
+    checkFunction: "checkAPIKeyInURL"
+  },
+  {
+    id: 503,
+    category: "REST API",
+    title: "No API Rate Limiting",
+    description: "API endpoints without rate limits",
+    severity: "high",
+    cwe: "CWE-770",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement rate limiting per user/IP (e.g., 100 req/min)",
+    checkFunction: "checkAPIRateLimit"
+  },
+  {
+    id: 504,
+    category: "REST API",
+    title: "Mass Assignment Vulnerability",
+    description: "API allows updating unintended object properties",
+    severity: "high",
+    cwe: "CWE-915",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Use allowlist for updateable fields, implement DTOs",
+    checkFunction: "checkMassAssignment"
+  },
+  {
+    id: 505,
+    category: "REST API",
+    title: "Predictable API Resource IDs",
+    description: "Sequential or guessable resource identifiers",
+    severity: "medium",
+    cwe: "CWE-330",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Use UUIDs or random IDs for resources",
+    checkFunction: "checkPredictableAPIIDs"
+  },
+  {
+    id: 506,
+    category: "REST API",
+    title: "API Versioning Missing",
+    description: "No API versioning strategy",
+    severity: "low",
+    cwe: "CWE-1059",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement API versioning (URL path or header)",
+    checkFunction: "checkAPIVersioning"
+  },
+  {
+    id: 507,
+    category: "REST API",
+    title: "Excessive Data Exposure",
+    description: "API returns more data than necessary",
+    severity: "medium",
+    cwe: "CWE-213",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Return only required fields, implement field filtering",
+    checkFunction: "checkExcessiveDataExposure"
+  },
+  {
+    id: 508,
+    category: "REST API",
+    title: "No API Request Size Limit",
+    description: "API accepts unlimited request size",
+    severity: "medium",
+    cwe: "CWE-400",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Limit request body size (e.g., 10MB max)",
+    checkFunction: "checkAPIRequestSizeLimit"
+  },
+  {
+    id: 509,
+    category: "REST API",
+    title: "API CORS Misconfiguration",
+    description: "Permissive CORS allowing any origin",
+    severity: "high",
+    cwe: "CWE-942",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Restrict CORS to specific trusted origins",
+    checkFunction: "checkAPICORS"
+  },
+  {
+    id: 510,
+    category: "REST API",
+    title: "No API Request Logging",
+    description: "API requests not logged for audit",
+    severity: "medium",
+    cwe: "CWE-778",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Log all API requests with user, endpoint, timestamp",
+    checkFunction: "checkAPILogging"
+  },
+  {
+    id: 511,
+    category: "REST API",
+    title: "API Error Messages Verbose",
+    description: "Detailed error messages expose internal information",
+    severity: "medium",
+    cwe: "CWE-209",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Return generic error messages, log details server-side",
+    checkFunction: "checkAPIVerboseErrors"
+  },
+  {
+    id: 512,
+    category: "REST API",
+    title: "HTTP Methods Not Restricted",
+    description: "API allows unintended HTTP methods (PUT on read-only endpoint)",
+    severity: "medium",
+    cwe: "CWE-650",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Explicitly allow only required HTTP methods",
+    checkFunction: "checkAPIHTTPMethods"
+  },
+  {
+    id: 513,
+    category: "REST API",
+    title: "No API Content-Type Validation",
+    description: "API doesn't validate Content-Type header",
+    severity: "medium",
+    cwe: "CWE-20",
+    owasp: "A03:2021 - Injection",
+    recommendation: "Validate Content-Type, reject unexpected types",
+    checkFunction: "checkAPIContentType"
+  },
+  {
+    id: 514,
+    category: "REST API",
+    title: "API Pagination Missing",
+    description: "Endpoints return all records without pagination",
+    severity: "medium",
+    cwe: "CWE-400",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement pagination with max page size",
+    checkFunction: "checkAPIPagination"
+  },
+  {
+    id: 515,
+    category: "REST API",
+    title: "API Enumeration Possible",
+    description: "Can enumerate all resources by incrementing IDs",
+    severity: "medium",
+    cwe: "CWE-639",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement proper authorization checks on all resources",
+    checkFunction: "checkAPIEnumeration"
+  },
+  {
+    id: 516,
+    category: "REST API",
+    title: "API Accepts GET for Modifications",
+    description: "State-changing operations via GET requests",
+    severity: "medium",
+    cwe: "CWE-650",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Use POST/PUT/DELETE for state changes, not GET",
+    checkFunction: "checkAPIGETModifications"
+  },
+  {
+    id: 517,
+    category: "REST API",
+    title: "No API Throttling",
+    description: "No protection against API abuse",
+    severity: "high",
+    cwe: "CWE-770",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement throttling, circuit breakers",
+    checkFunction: "checkAPIThrottling"
+  },
+  {
+    id: 518,
+    category: "REST API",
+    title: "API Timestamp Validation Missing",
+    description: "Requests accepted regardless of timestamp",
+    severity: "low",
+    cwe: "CWE-324",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Validate request timestamp, reject old requests",
+    checkFunction: "checkAPITimestamp"
+  },
+  {
+    id: 519,
+    category: "REST API",
+    title: "API Documentation Publicly Accessible",
+    description: "Swagger/OpenAPI docs exposed without authentication",
+    severity: "medium",
+    cwe: "CWE-200",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Protect API documentation, disable in production",
+    checkFunction: "checkAPIDocsPublic"
+  },
+  {
+    id: 520,
+    category: "REST API",
+    title: "No API Health Check Protection",
+    description: "Health/status endpoints reveal system information",
+    severity: "low",
+    cwe: "CWE-200",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Limit information in health checks, require auth",
+    checkFunction: "checkAPIHealthCheck"
+  },
+  {
+    id: 521,
+    category: "REST API",
+    title: "API JSONP Enabled",
+    description: "JSONP endpoints vulnerable to callback manipulation",
+    severity: "medium",
+    cwe: "CWE-829",
+    owasp: "A03:2021 - Injection",
+    recommendation: "Disable JSONP, use CORS instead",
+    checkFunction: "checkAPIJSONP"
+  },
+  {
+    id: 522,
+    category: "REST API",
+    title: "API Accepts XML Entities",
+    description: "XML parsing vulnerable to XXE attacks",
+    severity: "high",
+    cwe: "CWE-611",
+    owasp: "A03:2021 - Injection",
+    recommendation: "Disable external entities in XML parser",
+    checkFunction: "checkAPIXXE"
+  },
+  {
+    id: 523,
+    category: "REST API",
+    title: "No API Input Length Limits",
+    description: "API fields accept unlimited input length",
+    severity: "medium",
+    cwe: "CWE-20",
+    owasp: "A03:2021 - Injection",
+    recommendation: "Enforce maximum length for all input fields",
+    checkFunction: "checkAPIInputLength"
+  },
+  {
+    id: 524,
+    category: "REST API",
+    title: "API Lacks Idempotency",
+    description: "Duplicate requests cause duplicate actions",
+    severity: "medium",
+    cwe: "CWE-841",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement idempotency keys for POST requests",
+    checkFunction: "checkAPIIdempotency"
+  },
+  {
+    id: 525,
+    category: "REST API",
+    title: "API Response Time Leaks Info",
+    description: "Response time reveals if resources exist",
+    severity: "low",
+    cwe: "CWE-208",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Use constant-time responses for security-sensitive checks",
+    checkFunction: "checkAPITimingAttack"
+  },
+  {
+    id: 526,
+    category: "REST API",
+    title: "API Cache Headers Missing",
+    description: "No cache control for sensitive API responses",
+    severity: "medium",
+    cwe: "CWE-524",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Set Cache-Control: no-store for sensitive data",
+    checkFunction: "checkAPICacheHeaders"
+  },
+  {
+    id: 527,
+    category: "REST API",
+    title: "API Batch Operations Uncontrolled",
+    description: "Batch endpoints allow too many operations",
+    severity: "medium",
+    cwe: "CWE-770",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Limit batch size (e.g., max 100 items)",
+    checkFunction: "checkAPIBatchLimit"
+  },
+  {
+    id: 528,
+    category: "REST API",
+    title: "API Webhook Validation Missing",
+    description: "Webhook callbacks not validated",
+    severity: "high",
+    cwe: "CWE-345",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Validate webhook signatures (HMAC)",
+    checkFunction: "checkAPIWebhookValidation"
+  },
+  {
+    id: 529,
+    category: "REST API",
+    title: "API No Request ID Tracking",
+    description: "Requests not tracked with unique IDs",
+    severity: "low",
+    cwe: "CWE-778",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Add X-Request-ID to all requests for tracing",
+    checkFunction: "checkAPIRequestID"
+  },
+  {
+    id: 530,
+    category: "REST API",
+    title: "API Deprecated Endpoints Active",
+    description: "Old API versions still accessible",
+    severity: "medium",
+    cwe: "CWE-1059",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Retire deprecated API versions, redirect to latest",
+    checkFunction: "checkAPIDeprecation"
+  },
+
+  // GraphQL Security (31-50)
+  {
+    id: 531,
+    category: "GraphQL",
+    title: "GraphQL Introspection Enabled in Production",
+    description: "Schema introspection exposed publicly",
+    severity: "medium",
+    cwe: "CWE-200",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Disable introspection in production",
+    checkFunction: "checkGraphQLIntrospection"
+  },
+  {
+    id: 532,
+    category: "GraphQL",
+    title: "GraphQL Query Depth Unlimited",
+    description: "No limit on nested query depth",
+    severity: "high",
+    cwe: "CWE-400",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Limit query depth to 5-10 levels",
+    checkFunction: "checkGraphQLDepth"
+  },
+  {
+    id: 533,
+    category: "GraphQL",
+    title: "GraphQL Query Complexity Unchecked",
+    description: "Complex queries can DoS the server",
+    severity: "high",
+    cwe: "CWE-400",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement query complexity analysis and limits",
+    checkFunction: "checkGraphQLComplexity"
+  },
+  {
+    id: 534,
+    category: "GraphQL",
+    title: "GraphQL Batch Queries Uncontrolled",
+    description: "Unlimited queries in single request",
+    severity: "high",
+    cwe: "CWE-770",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Limit batch size (e.g., 10 queries per request)",
+    checkFunction: "checkGraphQLBatch"
+  },
+  {
+    id: 535,
+    category: "GraphQL",
+    title: "GraphQL Mutation Rate Not Limited",
+    description: "Write operations without rate limiting",
+    severity: "high",
+    cwe: "CWE-770",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Apply stricter rate limits to mutations",
+    checkFunction: "checkGraphQLMutationRate"
+  },
+  {
+    id: 536,
+    category: "GraphQL",
+    title: "GraphQL Field-Level Authorization Missing",
+    description: "Authorization only at query level, not fields",
+    severity: "high",
+    cwe: "CWE-862",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Implement authorization checks at field resolver level",
+    checkFunction: "checkGraphQLFieldAuth"
+  },
+  {
+    id: 537,
+    category: "GraphQL",
+    title: "GraphQL Resolver Information Leakage",
+    description: "Error messages expose resolver implementation",
+    severity: "medium",
+    cwe: "CWE-209",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Return generic errors, mask resolver details",
+    checkFunction: "checkGraphQLResolverErrors"
+  },
+  {
+    id: 538,
+    category: "GraphQL",
+    title: "GraphQL Aliases Allow Resource Exhaustion",
+    description: "Query aliases bypass rate limiting",
+    severity: "medium",
+    cwe: "CWE-400",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Count aliases in complexity calculation",
+    checkFunction: "checkGraphQLAliases"
+  },
+  {
+    id: 539,
+    category: "GraphQL",
+    title: "GraphQL Subscription DoS",
+    description: "Unlimited subscriptions per user",
+    severity: "high",
+    cwe: "CWE-400",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Limit active subscriptions per client",
+    checkFunction: "checkGraphQLSubscriptions"
+  },
+  {
+    id: 540,
+    category: "GraphQL",
+    title: "GraphQL Circular Query",
+    description: "Schema allows circular references causing infinite loops",
+    severity: "high",
+    cwe: "CWE-835",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Detect and reject circular queries",
+    checkFunction: "checkGraphQLCircular"
+  },
+  {
+    id: 541,
+    category: "GraphQL",
+    title: "GraphQL Playground in Production",
+    description: "Interactive GraphQL IDE accessible",
+    severity: "medium",
+    cwe: "CWE-200",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Disable GraphQL Playground in production",
+    checkFunction: "checkGraphQLPlayground"
+  },
+  {
+    id: 542,
+    category: "GraphQL",
+    title: "GraphQL Query Whitelisting Missing",
+    description: "Arbitrary queries accepted",
+    severity: "medium",
+    cwe: "CWE-749",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Use persisted queries/query whitelisting",
+    checkFunction: "checkGraphQLWhitelist"
+  },
+  {
+    id: 543,
+    category: "GraphQL",
+    title: "GraphQL Input Validation Weak",
+    description: "Input arguments not properly validated",
+    severity: "high",
+    cwe: "CWE-20",
+    owasp: "A03:2021 - Injection",
+    recommendation: "Validate all input arguments at resolver level",
+    checkFunction: "checkGraphQLInputValidation"
+  },
+  {
+    id: 544,
+    category: "GraphQL",
+    title: "GraphQL DataLoader Not Used",
+    description: "N+1 query problem causing performance issues",
+    severity: "low",
+    cwe: "CWE-400",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement DataLoader for batching and caching",
+    checkFunction: "checkGraphQLDataLoader"
+  },
+  {
+    id: 545,
+    category: "GraphQL",
+    title: "GraphQL Timeout Missing",
+    description: "Long-running queries can hang server",
+    severity: "medium",
+    cwe: "CWE-400",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Set query execution timeout (e.g., 30 seconds)",
+    checkFunction: "checkGraphQLTimeout"
+  },
+  {
+    id: 546,
+    category: "GraphQL",
+    title: "GraphQL Mutation Chaining Abuse",
+    description: "Multiple mutations bypass business logic",
+    severity: "medium",
+    cwe: "CWE-841",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Validate mutation sequences and dependencies",
+    checkFunction: "checkGraphQLMutationChain"
+  },
+  {
+    id: 547,
+    category: "GraphQL",
+    title: "GraphQL File Upload Uncontrolled",
+    description: "File uploads via GraphQL without limits",
+    severity: "high",
+    cwe: "CWE-434",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Limit file size, validate types, scan for malware",
+    checkFunction: "checkGraphQLFileUpload"
+  },
+  {
+    id: 548,
+    category: "GraphQL",
+    title: "GraphQL Schema Stitching Unsafe",
+    description: "Schema federation introduces vulnerabilities",
+    severity: "medium",
+    cwe: "CWE-942",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Validate remote schemas, use schema allowlist",
+    checkFunction: "checkGraphQLSchemaStitching"
+  },
+  {
+    id: 549,
+    category: "GraphQL",
+    title: "GraphQL Tracing Enabled",
+    description: "Query tracing exposes performance data",
+    severity: "low",
+    cwe: "CWE-200",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Disable Apollo tracing in production",
+    checkFunction: "checkGraphQLTracing"
+  },
+  {
+    id: 550,
+    category: "GraphQL",
+    title: "GraphQL Caching Issues",
+    description: "Improper caching exposes data across users",
+    severity: "high",
+    cwe: "CWE-524",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Include user context in cache keys",
+    checkFunction: "checkGraphQLCaching"
+  },
+
+  // Webhook & Callback Security (51-65)
+  {
+    id: 551,
+    category: "Webhooks",
+    title: "Webhook URL Not Validated",
+    description: "Webhooks can target internal URLs (SSRF)",
+    severity: "critical",
+    cwe: "CWE-918",
+    owasp: "A10:2021 - Server-Side Request Forgery",
+    recommendation: "Validate webhook URLs, block internal IPs",
+    checkFunction: "checkWebhookURLValidation"
+  },
+  {
+    id: 552,
+    category: "Webhooks",
+    title: "Webhook Signature Not Verified",
+    description: "No HMAC signature verification",
+    severity: "high",
+    cwe: "CWE-345",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Implement HMAC-SHA256 signature verification",
+    checkFunction: "checkWebhookSignature"
+  },
+  {
+    id: 553,
+    category: "Webhooks",
+    title: "Webhook Replay Attack Possible",
+    description: "No timestamp or nonce validation",
+    severity: "medium",
+    cwe: "CWE-294",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Include timestamp in signature, reject old requests",
+    checkFunction: "checkWebhookReplay"
+  },
+  {
+    id: 554,
+    category: "Webhooks",
+    title: "Webhook Retry Storm",
+    description: "Infinite retries on failure",
+    severity: "medium",
+    cwe: "CWE-400",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement exponential backoff, max retry limit",
+    checkFunction: "checkWebhookRetry"
+  },
+  {
+    id: 555,
+    category: "Webhooks",
+    title: "Webhook Secret Hardcoded",
+    description: "HMAC secret in source code",
+    severity: "high",
+    cwe: "CWE-798",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Store webhook secrets in environment variables or KMS",
+    checkFunction: "checkWebhookSecretHardcoded"
+  },
+  {
+    id: 556,
+    category: "Webhooks",
+    title: "Webhook Timeout Too Long",
+    description: "Webhook calls can hang indefinitely",
+    severity: "medium",
+    cwe: "CWE-400",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Set webhook timeout (e.g., 10 seconds)",
+    checkFunction: "checkWebhookTimeout"
+  },
+  {
+    id: 557,
+    category: "Webhooks",
+    title: "Webhook SSL Not Verified",
+    description: "HTTPS certificate validation disabled",
+    severity: "high",
+    cwe: "CWE-295",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Always verify SSL certificates for webhooks",
+    checkFunction: "checkWebhookSSL"
+  },
+  {
+    id: 558,
+    category: "Webhooks",
+    title: "Webhook Contains Sensitive Data",
+    description: "Full user data sent in webhooks",
+    severity: "medium",
+    cwe: "CWE-359",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Send only IDs, require API callback for full data",
+    checkFunction: "checkWebhookSensitiveData"
+  },
+  {
+    id: 559,
+    category: "Webhooks",
+    title: "Webhook Rate Not Limited",
+    description: "Can trigger excessive webhook calls",
+    severity: "medium",
+    cwe: "CWE-770",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Rate limit webhook triggers per user",
+    checkFunction: "checkWebhookRateLimit"
+  },
+  {
+    id: 560,
+    category: "Webhooks",
+    title: "Webhook Logging Insufficient",
+    description: "Webhook calls not logged for audit",
+    severity: "low",
+    cwe: "CWE-778",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Log all webhook calls with timestamp, user, response",
+    checkFunction: "checkWebhookLogging"
+  },
+  {
+    id: 561,
+    category: "Webhooks",
+    title: "Callback URL Validation Missing",
+    description: "OAuth/OIDC callbacks not validated",
+    severity: "high",
+    cwe: "CWE-601",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Validate callback URLs against registered list",
+    checkFunction: "checkCallbackValidation"
+  },
+  {
+    id: 562,
+    category: "Webhooks",
+    title: "Webhook Order Not Guaranteed",
+    description: "Webhooks processed out of order",
+    severity: "low",
+    cwe: "CWE-362",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Include sequence number, handle out-of-order",
+    checkFunction: "checkWebhookOrder"
+  },
+  {
+    id: 563,
+    category: "Webhooks",
+    title: "Webhook Dead Letter Queue Missing",
+    description: "Failed webhooks lost",
+    severity: "low",
+    cwe: "CWE-404",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement DLQ for failed webhook deliveries",
+    checkFunction: "checkWebhookDLQ"
+  },
+  {
+    id: 564,
+    category: "Webhooks",
+    title: "Webhook User-Agent Not Set",
+    description: "Webhook requests lack identifiable User-Agent",
+    severity: "low",
+    cwe: "CWE-1104",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Set custom User-Agent for webhook requests",
+    checkFunction: "checkWebhookUserAgent"
+  },
+  {
+    id: 565,
+    category: "Webhooks",
+    title: "Webhook Endpoint Discovery",
+    description: "Webhook URLs easily enumerable",
+    severity: "low",
+    cwe: "CWE-200",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Use random tokens in webhook URLs",
+    checkFunction: "checkWebhookDiscovery"
+  },
+
+  // Microservices Security (66-85)
+  {
+    id: 566,
+    category: "Microservices",
+    title: "Service-to-Service Auth Missing",
+    description: "Internal services accessible without authentication",
+    severity: "critical",
+    cwe: "CWE-306",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Implement mutual TLS or service mesh authentication",
+    checkFunction: "checkServiceAuth"
+  },
+  {
+    id: 567,
+    category: "Microservices",
+    title: "API Gateway Bypass Possible",
+    description: "Internal services directly accessible",
+    severity: "high",
+    cwe: "CWE-284",
+    owasp: "A01:2021 - Broken Access Control",
+    recommendation: "Block direct access to internal services, use firewall",
+    checkFunction: "checkAPIGatewayBypass"
+  },
+  {
+    id: 568,
+    category: "Microservices",
+    title: "Service Mesh Not Encrypted",
+    description: "Inter-service communication in plain text",
+    severity: "high",
+    cwe: "CWE-319",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Enable mTLS in service mesh (Istio, Linkerd)",
+    checkFunction: "checkServiceMeshEncryption"
+  },
+  {
+    id: 569,
+    category: "Microservices",
+    title: "Sidecar Container Misconfigured",
+    description: "Service mesh sidecar has excessive permissions",
+    severity: "medium",
+    cwe: "CWE-269",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Apply least privilege to sidecar containers",
+    checkFunction: "checkSidecarConfig"
+  },
+  {
+    id: 570,
+    category: "Microservices",
+    title: "Circuit Breaker Missing",
+    description: "No protection against cascading failures",
+    severity: "medium",
+    cwe: "CWE-400",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement circuit breaker pattern (Hystrix, Resilience4j)",
+    checkFunction: "checkCircuitBreaker"
+  },
+  {
+    id: 571,
+    category: "Microservices",
+    title: "Service Discovery Unsecured",
+    description: "Service registry accessible without auth",
+    severity: "high",
+    cwe: "CWE-306",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Secure Consul/Eureka with authentication and ACLs",
+    checkFunction: "checkServiceDiscovery"
+  },
+  {
+    id: 572,
+    category: "Microservices",
+    title: "Distributed Tracing Exposes Data",
+    description: "Tracing includes sensitive information",
+    severity: "medium",
+    cwe: "CWE-532",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Sanitize sensitive data from traces",
+    checkFunction: "checkDistributedTracing"
+  },
+  {
+    id: 573,
+    category: "Microservices",
+    title: "Service Registry Poisoning",
+    description: "Malicious services can register",
+    severity: "high",
+    cwe: "CWE-345",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Authenticate service registration, use ACLs",
+    checkFunction: "checkServiceRegistryPoisoning"
+  },
+  {
+    id: 574,
+    category: "Microservices",
+    title: "gRPC Without TLS",
+    description: "gRPC communication not encrypted",
+    severity: "high",
+    cwe: "CWE-319",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Enable TLS for all gRPC connections",
+    checkFunction: "checkGRPCTLS"
+  },
+  {
+    id: 575,
+    category: "Microservices",
+    title: "Message Queue Not Secured",
+    description: "RabbitMQ/Kafka accessible without auth",
+    severity: "high",
+    cwe: "CWE-306",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Enable authentication and authorization for message brokers",
+    checkFunction: "checkMessageQueueSecurity"
+  },
+  {
+    id: 576,
+    category: "Microservices",
+    title: "Event Sourcing Audit Missing",
+    description: "Event store changes not audited",
+    severity: "medium",
+    cwe: "CWE-778",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Audit all event store operations",
+    checkFunction: "checkEventSourcingAudit"
+  },
+  {
+    id: 577,
+    category: "Microservices",
+    title: "SAGA Transaction Rollback Incomplete",
+    description: "Distributed transaction rollback fails silently",
+    severity: "medium",
+    cwe: "CWE-755",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement compensating transactions, monitor SAGA failures",
+    checkFunction: "checkSAGARollback"
+  },
+  {
+    id: 578,
+    category: "Microservices",
+    title: "Service Timeout Too Long",
+    description: "Service calls can hang indefinitely",
+    severity: "medium",
+    cwe: "CWE-400",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Set reasonable timeouts for all service calls",
+    checkFunction: "checkServiceTimeout"
+  },
+  {
+    id: 579,
+    category: "Microservices",
+    title: "Bulkhead Pattern Not Used",
+    description: "One slow service affects all",
+    severity: "low",
+    cwe: "CWE-400",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement bulkhead pattern to isolate resources",
+    checkFunction: "checkBulkheadPattern"
+  },
+  {
+    id: 580,
+    category: "Microservices",
+    title: "Service Version Mismatch Handling",
+    description: "Incompatible service versions cause failures",
+    severity: "medium",
+    cwe: "CWE-1126",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement version negotiation and backwards compatibility",
+    checkFunction: "checkServiceVersioning"
+  },
+  {
+    id: 581,
+    category: "Microservices",
+    title: "No Service Health Check",
+    description: "Unhealthy services receive traffic",
+    severity: "medium",
+    cwe: "CWE-1088",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement health check endpoints, configure load balancer",
+    checkFunction: "checkServiceHealth"
+  },
+  {
+    id: 582,
+    category: "Microservices",
+    title: "Correlation ID Missing",
+    description: "Cannot trace requests across services",
+    severity: "low",
+    cwe: "CWE-778",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Propagate correlation ID through all service calls",
+    checkFunction: "checkCorrelationID"
+  },
+  {
+    id: 583,
+    category: "Microservices",
+    title: "Service Dependency Cycle",
+    description: "Circular dependencies between services",
+    severity: "medium",
+    cwe: "CWE-1047",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Refactor to remove circular dependencies",
+    checkFunction: "checkServiceDependencyCycle"
+  },
+  {
+    id: 584,
+    category: "Microservices",
+    title: "Container Orchestration API Exposed",
+    description: "Kubernetes API publicly accessible",
+    severity: "critical",
+    cwe: "CWE-306",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Restrict K8s API access with network policy and RBAC",
+    checkFunction: "checkK8sAPIExposure"
+  },
+  {
+    id: 585,
+    category: "Microservices",
+    title: "Secrets in Service Communication",
+    description: "Secrets passed between services unnecessarily",
+    severity: "high",
+    cwe: "CWE-200",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Services should fetch secrets independently from vault",
+    checkFunction: "checkSecretsInServiceComm"
+  },
+
+  // API Gateway & Management (86-100)
+  {
+    id: 586,
+    category: "API Gateway",
+    title: "API Gateway Logging Disabled",
+    description: "Gateway doesn't log requests",
+    severity: "medium",
+    cwe: "CWE-778",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Enable request/response logging at gateway",
+    checkFunction: "checkGatewayLogging"
+  },
+  {
+    id: 587,
+    category: "API Gateway",
+    title: "API Gateway Rate Limit Per IP Only",
+    description: "Rate limiting bypassable with proxy",
+    severity: "medium",
+    cwe: "CWE-770",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Rate limit by user, API key, and IP",
+    checkFunction: "checkGatewayRateLimitMethod"
+  },
+  {
+    id: 588,
+    category: "API Gateway",
+    title: "API Gateway WAF Disabled",
+    description: "No web application firewall protection",
+    severity: "high",
+    cwe: "CWE-1008",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Enable WAF with OWASP Core Rule Set",
+    checkFunction: "checkGatewayWAF"
+  },
+  {
+    id: 589,
+    category: "API Gateway",
+    title: "API Gateway Request Validation Disabled",
+    description: "Gateway forwards invalid requests",
+    severity: "medium",
+    cwe: "CWE-20",
+    owasp: "A03:2021 - Injection",
+    recommendation: "Enable request validation at gateway level",
+    checkFunction: "checkGatewayValidation"
+  },
+  {
+    id: 590,
+    category: "API Gateway",
+    title: "API Gateway Response Transformation",
+    description: "Gateway modifies responses insecurely",
+    severity: "low",
+    cwe: "CWE-20",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Minimize response transformation, validate output",
+    checkFunction: "checkGatewayTransformation"
+  },
+  {
+    id: 591,
+    category: "API Gateway",
+    title: "API Key Rotation Not Enforced",
+    description: "API keys never expire",
+    severity: "medium",
+    cwe: "CWE-324",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Implement API key expiration and rotation",
+    checkFunction: "checkAPIKeyRotation"
+  },
+  {
+    id: 592,
+    category: "API Gateway",
+    title: "API Quota Not Enforced",
+    description: "No limits on API usage per customer",
+    severity: "medium",
+    cwe: "CWE-770",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement usage quotas per subscription tier",
+    checkFunction: "checkAPIQuota"
+  },
+  {
+    id: 593,
+    category: "API Gateway",
+    title: "API Gateway Caching Sensitive Data",
+    description: "Gateway caches responses with PII",
+    severity: "high",
+    cwe: "CWE-524",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Don't cache sensitive endpoints, use Cache-Control headers",
+    checkFunction: "checkGatewayCachingSensitive"
+  },
+  {
+    id: 594,
+    category: "API Gateway",
+    title: "API Gateway Metrics Expose Info",
+    description: "Metrics endpoint reveals system details",
+    severity: "low",
+    cwe: "CWE-200",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Protect metrics endpoint, limit exposed information",
+    checkFunction: "checkGatewayMetrics"
+  },
+  {
+    id: 595,
+    category: "API Gateway",
+    title: "API Gateway Admin Panel Exposed",
+    description: "Gateway management interface publicly accessible",
+    severity: "critical",
+    cwe: "CWE-425",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Restrict admin panel to internal network, use strong auth",
+    checkFunction: "checkGatewayAdminExposed"
+  },
+  {
+    id: 596,
+    category: "API Gateway",
+    title: "API Gateway SSL Termination Weak",
+    description: "Weak TLS configuration at gateway",
+    severity: "high",
+    cwe: "CWE-327",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use TLS 1.2+, strong ciphers at gateway",
+    checkFunction: "checkGatewaySSL"
+  },
+  {
+    id: 597,
+    category: "API Gateway",
+    title: "API Gateway Header Injection",
+    description: "Gateway vulnerable to header manipulation",
+    severity: "medium",
+    cwe: "CWE-113",
+    owasp: "A03:2021 - Injection",
+    recommendation: "Sanitize and validate all headers at gateway",
+    checkFunction: "checkGatewayHeaderInjection"
+  },
+  {
+    id: 598,
+    category: "API Gateway",
+    title: "API Gateway Request Smuggling",
+    description: "HTTP request smuggling possible",
+    severity: "high",
+    cwe: "CWE-444",
+    owasp: "A03:2021 - Injection",
+    recommendation: "Normalize requests, use HTTP/2, validate Content-Length",
+    checkFunction: "checkGatewayRequestSmuggling"
+  },
+  {
+    id: 599,
+    category: "API Gateway",
+    title: "API Gateway Mock Responses in Production",
+    description: "Mock/stub responses still active",
+    severity: "medium",
+    cwe: "CWE-489",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Disable mocking in production environments",
+    checkFunction: "checkGatewayMockResponses"
+  },
+  {
+    id: 600,
+    category: "API Gateway",
+    title: "API Gateway No DDoS Protection",
+    description: "No layer 7 DDoS mitigation",
+    severity: "high",
+    cwe: "CWE-400",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Use CDN/WAF with DDoS protection (Cloudflare, AWS Shield)",
+    checkFunction: "checkGatewayDDoSProtection"
+  }
+];
+
+// Export for use in scanner
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { category6_APIWebServices };
+}

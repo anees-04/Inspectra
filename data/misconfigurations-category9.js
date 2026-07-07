@@ -1,0 +1,1122 @@
+// ========================================
+// SECURITY MISCONFIGURATIONS DATABASE
+// Category 9: Third-Party Dependencies & Supply Chain Security
+// Total: 100 Misconfigurations
+// ========================================
+
+const category9_ThirdPartyDependencies = [
+  // Dependency Management (1-30)
+  {
+    id: 801,
+    category: "Dependency Management",
+    title: "Outdated Dependencies",
+    description: "Using packages with known security vulnerabilities",
+    severity: "high",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Run npm audit, update dependencies regularly",
+    checkFunction: "checkOutdatedDependencies"
+  },
+  {
+    id: 802,
+    category: "Dependency Management",
+    title: "No Dependency Lock File",
+    description: "Missing package-lock.json or yarn.lock",
+    severity: "medium",
+    cwe: "CWE-494",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Commit lock files to ensure reproducible builds",
+    checkFunction: "checkLockFile"
+  },
+  {
+    id: 803,
+    category: "Dependency Management",
+    title: "Wildcard Version Ranges",
+    description: "Using * or ^ in package.json versions",
+    severity: "medium",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Pin exact versions or use ~ for patch updates only",
+    checkFunction: "checkWildcardVersions"
+  },
+  {
+    id: 804,
+    category: "Dependency Management",
+    title: "Direct Dependency on Beta/Alpha",
+    description: "Production using pre-release package versions",
+    severity: "medium",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Use stable releases in production",
+    checkFunction: "checkPreReleaseVersions"
+  },
+  {
+    id: 805,
+    category: "Dependency Management",
+    title: "Deprecated Package in Use",
+    description: "Using packages marked as deprecated",
+    severity: "medium",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Replace deprecated packages with maintained alternatives",
+    checkFunction: "checkDeprecatedPackages"
+  },
+  {
+    id: 806,
+    category: "Dependency Management",
+    title: "Unmaintained Package",
+    description: "Package not updated in over 2 years",
+    severity: "medium",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Evaluate package maintenance, consider alternatives",
+    checkFunction: "checkUnmaintainedPackages"
+  },
+  {
+    id: 807,
+    category: "Dependency Management",
+    title: "Excessive Dependencies",
+    description: "Hundreds of dependencies increasing attack surface",
+    severity: "low",
+    cwe: "CWE-1088",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Audit dependencies, remove unnecessary ones",
+    checkFunction: "checkExcessiveDependencies"
+  },
+  {
+    id: 808,
+    category: "Dependency Management",
+    title: "Duplicate Dependencies",
+    description: "Multiple versions of same package",
+    severity: "low",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Use npm dedupe or yarn dedupe",
+    checkFunction: "checkDuplicateDependencies"
+  },
+  {
+    id: 809,
+    category: "Dependency Management",
+    title: "Transitive Dependency Vulnerability",
+    description: "Vulnerable package in dependency tree",
+    severity: "high",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Use npm audit fix, update parent dependencies",
+    checkFunction: "checkTransitiveDependencies"
+  },
+  {
+    id: 810,
+    category: "Dependency Management",
+    title: "No Security Scanning in CI/CD",
+    description: "Dependencies not scanned during build",
+    severity: "high",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Integrate Snyk, npm audit, or OWASP Dependency-Check",
+    checkFunction: "checkDependencyScanning"
+  },
+  {
+    id: 811,
+    category: "Dependency Management",
+    title: "Package Install Scripts Not Reviewed",
+    description: "npm packages with postinstall scripts run automatically",
+    severity: "high",
+    cwe: "CWE-494",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Review install scripts, use --ignore-scripts flag",
+    checkFunction: "checkInstallScripts"
+  },
+  {
+    id: 812,
+    category: "Dependency Management",
+    title: "Private Registry Not Configured",
+    description: "Using only public npm registry",
+    severity: "low",
+    cwe: "CWE-494",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Use private registry for internal packages",
+    checkFunction: "checkPrivateRegistry"
+  },
+  {
+    id: 813,
+    category: "Dependency Management",
+    title: "Package Integrity Not Verified",
+    description: "npm package checksums not validated",
+    severity: "medium",
+    cwe: "CWE-353",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Use package-lock.json integrity hashes",
+    checkFunction: "checkPackageIntegrity"
+  },
+  {
+    id: 814,
+    category: "Dependency Management",
+    title: "Dependencies Downloaded Over HTTP",
+    description: "Package registry accessed via HTTP not HTTPS",
+    severity: "high",
+    cwe: "CWE-319",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Always use HTTPS for package registries",
+    checkFunction: "checkRegistryHTTPS"
+  },
+  {
+    id: 815,
+    category: "Dependency Management",
+    title: "No Vulnerability Monitoring",
+    description: "No alerts for new vulnerabilities in dependencies",
+    severity: "medium",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Enable Dependabot, Snyk alerts, or GitHub Security Advisories",
+    checkFunction: "checkVulnerabilityMonitoring"
+  },
+  {
+    id: 816,
+    category: "Dependency Management",
+    title: "Peer Dependency Conflicts",
+    description: "Incompatible peer dependencies",
+    severity: "low",
+    cwe: "CWE-1126",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Resolve peer dependency conflicts",
+    checkFunction: "checkPeerDependencies"
+  },
+  {
+    id: 817,
+    category: "Dependency Management",
+    title: "devDependencies in Production",
+    description: "Development packages included in production build",
+    severity: "low",
+    cwe: "CWE-1188",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Use npm install --production, exclude devDependencies",
+    checkFunction: "checkDevDependenciesInProd"
+  },
+  {
+    id: 818,
+    category: "Dependency Management",
+    title: "License Compliance Issues",
+    description: "Dependencies with incompatible licenses (GPL, AGPL)",
+    severity: "low",
+    cwe: "CWE-1059",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Audit licenses with license-checker, comply with terms",
+    checkFunction: "checkLicenseCompliance"
+  },
+  {
+    id: 819,
+    category: "Dependency Management",
+    title: "Monorepo Dependency Hoisting Issues",
+    description: "Workspace dependencies not properly isolated",
+    severity: "low",
+    cwe: "CWE-668",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Configure workspace hoisting patterns properly",
+    checkFunction: "checkMonorepoDependencies"
+  },
+  {
+    id: 820,
+    category: "Dependency Management",
+    title: "No Dependency Update Policy",
+    description: "No process for updating dependencies",
+    severity: "low",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Establish regular dependency update schedule",
+    checkFunction: "checkUpdatePolicy"
+  },
+  {
+    id: 821,
+    category: "Dependency Management",
+    title: "Prototype Pollution in Dependency",
+    description: "Dependency vulnerable to prototype pollution",
+    severity: "high",
+    cwe: "CWE-1321",
+    owasp: "A03:2021 - Injection",
+    recommendation: "Update vulnerable packages (lodash, jQuery, etc.)",
+    checkFunction: "checkPrototypePollutionDep"
+  },
+  {
+    id: 822,
+    category: "Dependency Management",
+    title: "ReDoS in Dependency",
+    description: "Regex denial of service in third-party package",
+    severity: "medium",
+    cwe: "CWE-1333",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Update packages with ReDoS vulnerabilities",
+    checkFunction: "checkReDoSDep"
+  },
+  {
+    id: 823,
+    category: "Dependency Management",
+    title: "Dependency Confusion Vulnerability",
+    description: "Internal package name could be shadowed by public package",
+    severity: "high",
+    cwe: "CWE-427",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Use scoped packages (@company/package), configure registry order",
+    checkFunction: "checkDependencyConfusionRisk"
+  },
+  {
+    id: 824,
+    category: "Dependency Management",
+    title: "Git Dependencies Without Pinning",
+    description: "Depending on git repos without commit SHA",
+    severity: "medium",
+    cwe: "CWE-494",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Pin git dependencies to specific commit SHAs",
+    checkFunction: "checkGitDependencies"
+  },
+  {
+    id: 825,
+    category: "Dependency Management",
+    title: "Tarball Dependencies",
+    description: "Installing from tarball URLs without verification",
+    severity: "medium",
+    cwe: "CWE-494",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Avoid tarball dependencies, use proper registry",
+    checkFunction: "checkTarballDependencies"
+  },
+  {
+    id: 826,
+    category: "Dependency Management",
+    title: "Bower Still in Use",
+    description: "Using deprecated Bower package manager",
+    severity: "low",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Migrate to npm or yarn",
+    checkFunction: "checkBowerUsage"
+  },
+  {
+    id: 827,
+    category: "Dependency Management",
+    title: "Unused Dependencies",
+    description: "Packages installed but never imported",
+    severity: "low",
+    cwe: "CWE-1088",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Remove unused dependencies with depcheck",
+    checkFunction: "checkUnusedDependencies"
+  },
+  {
+    id: 828,
+    category: "Dependency Management",
+    title: "No Package Audit Trail",
+    description: "Cannot track who added which dependencies",
+    severity: "low",
+    cwe: "CWE-778",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Review pull requests for dependency changes",
+    checkFunction: "checkDependencyAuditTrail"
+  },
+  {
+    id: 829,
+    category: "Dependency Management",
+    title: "Native Module Without Prebuilt Binary",
+    description: "Native modules compiled on install, supply chain risk",
+    severity: "low",
+    cwe: "CWE-494",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Use packages with prebuilt binaries when possible",
+    checkFunction: "checkNativeModules"
+  },
+  {
+    id: 830,
+    category: "Dependency Management",
+    title: "Phantom Dependencies",
+    description: "Importing packages not in package.json",
+    severity: "medium",
+    cwe: "CWE-1104",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Explicitly declare all direct dependencies",
+    checkFunction: "checkPhantomDependencies"
+  },
+
+  // CDN & External Resources (31-50)
+  {
+    id: 831,
+    category: "CDN Security",
+    title: "CDN Resources Without SRI",
+    description: "Loading scripts from CDN without Subresource Integrity",
+    severity: "high",
+    cwe: "CWE-353",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Add integrity and crossorigin attributes to CDN scripts",
+    checkFunction: "checkCDNwithoutSRI"
+  },
+  {
+    id: 832,
+    category: "CDN Security",
+    title: "CDN Over HTTP",
+    description: "Loading resources from CDN via HTTP",
+    severity: "high",
+    cwe: "CWE-319",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use HTTPS for all CDN resources",
+    checkFunction: "checkCDNHTTP"
+  },
+  {
+    id: 833,
+    category: "CDN Security",
+    title: "Untrusted CDN",
+    description: "Using unknown or unverified CDN providers",
+    severity: "medium",
+    cwe: "CWE-494",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Use reputable CDNs (cdnjs, unpkg, jsDelivr)",
+    checkFunction: "checkUntrustedCDN"
+  },
+  {
+    id: 834,
+    category: "CDN Security",
+    title: "CDN Fallback Missing",
+    description: "No local fallback if CDN fails",
+    severity: "low",
+    cwe: "CWE-1088",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Implement fallback to local copy",
+    checkFunction: "checkCDNFallback"
+  },
+  {
+    id: 835,
+    category: "CDN Security",
+    title: "CDN Version Pinning Missing",
+    description: "Using latest or floating versions from CDN",
+    severity: "medium",
+    cwe: "CWE-494",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Pin specific versions in CDN URLs",
+    checkFunction: "checkCDNVersionPinning"
+  },
+  {
+    id: 836,
+    category: "CDN Security",
+    title: "Google Fonts Over HTTP",
+    description: "Loading fonts without HTTPS",
+    severity: "low",
+    cwe: "CWE-319",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Use HTTPS for Google Fonts",
+    checkFunction: "checkFontsHTTP"
+  },
+  {
+    id: 837,
+    category: "CDN Security",
+    title: "Analytics Script Modifiable",
+    description: "Google Analytics or similar loaded without SRI",
+    severity: "medium",
+    cwe: "CWE-353",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Use SRI for analytics scripts or self-host",
+    checkFunction: "checkAnalyticsSRI"
+  },
+  {
+    id: 838,
+    category: "CDN Security",
+    title: "jQuery from CDN Without SRI",
+    description: "jQuery loaded from CDN without integrity check",
+    severity: "high",
+    cwe: "CWE-353",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Add SRI hash for jQuery CDN",
+    checkFunction: "checkJQuerySRI"
+  },
+  {
+    id: 839,
+    category: "CDN Security",
+    title: "Bootstrap from CDN Without SRI",
+    description: "Bootstrap CSS/JS from CDN unverified",
+    severity: "medium",
+    cwe: "CWE-353",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Add SRI for Bootstrap CDN resources",
+    checkFunction: "checkBootstrapSRI"
+  },
+  {
+    id: 840,
+    category: "CDN Security",
+    title: "Social Media Widgets Without Sandbox",
+    description: "Facebook, Twitter widgets loaded without iframe sandbox",
+    severity: "low",
+    cwe: "CWE-1021",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Use sandbox attribute for social widgets",
+    checkFunction: "checkSocialWidgets"
+  },
+  {
+    id: 841,
+    category: "CDN Security",
+    title: "Ad Network Scripts",
+    description: "Third-party ad scripts with full page access",
+    severity: "medium",
+    cwe: "CWE-829",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Isolate ad scripts, use CSP, consider impact",
+    checkFunction: "checkAdNetworkScripts"
+  },
+  {
+    id: 842,
+    category: "CDN Security",
+    title: "Payment Gateway Script From External",
+    description: "Payment processor scripts from external domain",
+    severity: "high",
+    cwe: "CWE-829",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Use official payment processor SDKs with SRI",
+    checkFunction: "checkPaymentGatewayScripts"
+  },
+  {
+    id: 843,
+    category: "CDN Security",
+    title: "Live Chat Widget Security",
+    description: "Intercom, Zendesk chat with excessive permissions",
+    severity: "low",
+    cwe: "CWE-272",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Review chat widget permissions, use CSP",
+    checkFunction: "checkLiveChatSecurity"
+  },
+  {
+    id: 844,
+    category: "CDN Security",
+    title: "Web Font CORS Misconfiguration",
+    description: "Fonts loaded from CDN without proper CORS",
+    severity: "low",
+    cwe: "CWE-942",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Configure CORS headers for font files",
+    checkFunction: "checkFontCORS"
+  },
+  {
+    id: 845,
+    category: "CDN Security",
+    title: "CDN Cache Poisoning Risk",
+    description: "CDN caching headers allow cache poisoning",
+    severity: "medium",
+    cwe: "CWE-444",
+    owasp: "A05:2021 - Security Misconfiguration",
+    recommendation: "Configure CDN cache keys properly",
+    checkFunction: "checkCDNCachePoisoning"
+  },
+  {
+    id: 846,
+    category: "CDN Security",
+    title: "Mixed Content via CDN",
+    description: "HTTPS page loading HTTP CDN resources",
+    severity: "high",
+    cwe: "CWE-311",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Ensure all CDN resources use HTTPS",
+    checkFunction: "checkMixedContentCDN"
+  },
+  {
+    id: 847,
+    category: "CDN Security",
+    title: "CDN Purge API Keys Exposed",
+    description: "CDN management credentials in client code",
+    severity: "high",
+    cwe: "CWE-798",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Never expose CDN API keys",
+    checkFunction: "checkCDNAPIKeys"
+  },
+  {
+    id: 848,
+    category: "CDN Security",
+    title: "Tag Manager Security",
+    description: "Google Tag Manager with user-controllable variables",
+    severity: "medium",
+    cwe: "CWE-94",
+    owasp: "A03:2021 - Injection",
+    recommendation: "Restrict Tag Manager permissions, validate variables",
+    checkFunction: "checkTagManagerSecurity"
+  },
+  {
+    id: 849,
+    category: "CDN Security",
+    title: "Heatmap/Recording Tools",
+    description: "Hotjar, FullStory recording sensitive data",
+    severity: "high",
+    cwe: "CWE-359",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Exclude sensitive fields from recording tools",
+    checkFunction: "checkHeatmapTools"
+  },
+  {
+    id: 850,
+    category: "CDN Security",
+    title: "A/B Testing Framework Security",
+    description: "Optimizely, VWO scripts with excessive access",
+    severity: "low",
+    cwe: "CWE-829",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Review A/B testing tool permissions",
+    checkFunction: "checkABTestingSecurity"
+  },
+
+  // Supply Chain Attacks (51-70)
+  {
+    id: 851,
+    category: "Supply Chain",
+    title: "Typosquatting Dependency",
+    description: "Package name similar to popular package (crossenv vs cross-env)",
+    severity: "critical",
+    cwe: "CWE-494",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Verify package names carefully, check npm registry",
+    checkFunction: "checkTyposquatting"
+  },
+  {
+    id: 852,
+    category: "Supply Chain",
+    title: "Package Maintainer Compromise",
+    description: "Package taken over by malicious actor (event-stream)",
+    severity: "critical",
+    cwe: "CWE-494",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Monitor dependency changes, use security advisories",
+    checkFunction: "checkMaintainerCompromise"
+  },
+  {
+    id: 853,
+    category: "Supply Chain",
+    title: "Malicious Postinstall Script",
+    description: "Install script stealing credentials or injecting backdoor",
+    severity: "critical",
+    cwe: "CWE-506",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Review install scripts, use --ignore-scripts when safe",
+    checkFunction: "checkMaliciousInstallScript"
+  },
+  {
+    id: 854,
+    category: "Supply Chain",
+    title: "Package Ownership Transfer",
+    description: "Package transferred to unknown maintainer",
+    severity: "high",
+    cwe: "CWE-494",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Monitor package ownership changes via npm",
+    checkFunction: "checkOwnershipTransfer"
+  },
+  {
+    id: 855,
+    category: "Supply Chain",
+    title: "Compromised Build Environment",
+    description: "CI/CD environment compromised injecting malicious code",
+    severity: "critical",
+    cwe: "CWE-494",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Secure CI/CD, use isolated build environments",
+    checkFunction: "checkBuildCompromise"
+  },
+  {
+    id: 856,
+    category: "Supply Chain",
+    title: "Developer Account Compromise",
+    description: "npm account credentials stolen",
+    severity: "critical",
+    cwe: "CWE-287",
+    owasp: "A07:2021 - Identification and Authentication Failures",
+    recommendation: "Enable 2FA on npm accounts, use tokens with limited scope",
+    checkFunction: "checkDeveloperAccountSecurity"
+  },
+  {
+    id: 857,
+    category: "Supply Chain",
+    title: "Registry Mirror Attack",
+    description: "Using untrusted npm registry mirror",
+    severity: "high",
+    cwe: "CWE-494",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Use official registry or trusted mirrors only",
+    checkFunction: "checkRegistryMirror"
+  },
+  {
+    id: 858,
+    category: "Supply Chain",
+    title: "Package Metadata Manipulation",
+    description: "Package.json scripts or metadata tampered",
+    severity: "high",
+    cwe: "CWE-494",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Verify package integrity, use lock files",
+    checkFunction: "checkMetadataManipulation"
+  },
+  {
+    id: 859,
+    category: "Supply Chain",
+    title: "Branch Protection Not Enforced",
+    description: "Main branch allows direct pushes without review",
+    severity: "medium",
+    cwe: "CWE-284",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Enable branch protection, require PR reviews",
+    checkFunction: "checkBranchProtection"
+  },
+  {
+    id: 860,
+    category: "Supply Chain",
+    title: "No Code Review Process",
+    description: "Dependencies added without review",
+    severity: "medium",
+    cwe: "CWE-1008",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Require code review for dependency changes",
+    checkFunction: "checkCodeReviewProcess"
+  },
+  {
+    id: 861,
+    category: "Supply Chain",
+    title: "Unsigned Commits",
+    description: "Git commits not GPG signed",
+    severity: "low",
+    cwe: "CWE-345",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Enable commit signing verification",
+    checkFunction: "checkCommitSigning"
+  },
+  {
+    id: 862,
+    category: "Supply Chain",
+    title: "Source Code Repository Compromise",
+    description: "GitHub/GitLab repository access tokens leaked",
+    severity: "critical",
+    cwe: "CWE-798",
+    owasp: "A02:2021 - Cryptographic Failures",
+    recommendation: "Rotate tokens, enable secret scanning",
+    checkFunction: "checkRepoTokenLeak"
+  },
+  {
+    id: 863,
+    category: "Supply Chain",
+    title: "No Provenance Tracking",
+    description: "Cannot verify build artifacts provenance",
+    severity: "low",
+    cwe: "CWE-1394",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Implement SLSA framework, use sigstore",
+    checkFunction: "checkProvenance"
+  },
+  {
+    id: 864,
+    category: "Supply Chain",
+    title: "Continuous Deployment Without Gates",
+    description: "Auto-deploy to production without security checks",
+    severity: "high",
+    cwe: "CWE-1188",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Add security gates before production deployment",
+    checkFunction: "checkDeploymentGates"
+  },
+  {
+    id: 865,
+    category: "Supply Chain",
+    title: "Build Artifacts Not Scanned",
+    description: "Final build not scanned for malware or vulnerabilities",
+    severity: "medium",
+    cwe: "CWE-1104",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Scan build artifacts with antivirus and security tools",
+    checkFunction: "checkArtifactScanning"
+  },
+  {
+    id: 866,
+    category: "Supply Chain",
+    title: "Third-Party Code Injection",
+    description: "External contributors can inject code without review",
+    severity: "high",
+    cwe: "CWE-494",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Review all external contributions thoroughly",
+    checkFunction: "checkThirdPartyCodeInjection"
+  },
+  {
+    id: 867,
+    category: "Supply Chain",
+    title: "Vendor Lock-in Risk",
+    description: "Critical dependency owned by single vendor",
+    severity: "low",
+    cwe: "CWE-1059",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Evaluate alternatives, maintain exit strategy",
+    checkFunction: "checkVendorLockIn"
+  },
+  {
+    id: 868,
+    category: "Supply Chain",
+    title: "No Incident Response Plan",
+    description: "No plan for handling compromised dependencies",
+    severity: "medium",
+    cwe: "CWE-1008",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Create supply chain incident response plan",
+    checkFunction: "checkIncidentResponsePlan"
+  },
+  {
+    id: 869,
+    category: "Supply Chain",
+    title: "Package Namespace Squatting",
+    description: "Attacker registers package before legitimate owner",
+    severity: "medium",
+    cwe: "CWE-427",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Register package names early, use scoped packages",
+    checkFunction: "checkNamespaceSquatting"
+  },
+  {
+    id: 870,
+    category: "Supply Chain",
+    title: "Backdoor in Upstream Dependency",
+    description: "Malicious code in transitive dependency",
+    severity: "critical",
+    cwe: "CWE-506",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Deep scan dependency tree, use vulnerability databases",
+    checkFunction: "checkUpstreamBackdoor"
+  },
+
+  // Open Source Risks (71-85)
+  {
+    id: 871,
+    category: "Open Source",
+    title: "Forked Package Without Updates",
+    description: "Using fork that doesn't receive security updates",
+    severity: "medium",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Sync fork with upstream, or use original package",
+    checkFunction: "checkStaleFork"
+  },
+  {
+    id: 872,
+    category: "Open Source",
+    title: "Single Maintainer Dependency",
+    description: "Critical package maintained by one person",
+    severity: "low",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Evaluate bus factor, consider supporting project",
+    checkFunction: "checkSingleMaintainer"
+  },
+  {
+    id: 873,
+    category: "Open Source",
+    title: "Archived/Abandoned Repository",
+    description: "Depending on archived GitHub repository",
+    severity: "medium",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Fork and maintain, or find alternative",
+    checkFunction: "checkArchivedRepo"
+  },
+  {
+    id: 874,
+    category: "Open Source",
+    title: "Package Without License",
+    description: "Dependency with no license or unclear licensing",
+    severity: "low",
+    cwe: "CWE-1059",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Avoid unlicensed packages, seek legal advice",
+    checkFunction: "checkMissingLicense"
+  },
+  {
+    id: 875,
+    category: "Open Source",
+    title: "Copyleft License Conflict",
+    description: "GPL dependency in proprietary software",
+    severity: "medium",
+    cwe: "CWE-1059",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Review license compatibility, consult legal team",
+    checkFunction: "checkCopyleftConflict"
+  },
+  {
+    id: 876,
+    category: "Open Source",
+    title: "Package with Few Downloads",
+    description: "Using package with < 100 weekly downloads",
+    severity: "low",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Evaluate package popularity and maintenance",
+    checkFunction: "checkLowDownloads"
+  },
+  {
+    id: 877,
+    category: "Open Source",
+    title: "New Package Without History",
+    description: "Package created less than 6 months ago",
+    severity: "low",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Evaluate new packages carefully, check maintainer reputation",
+    checkFunction: "checkNewPackage"
+  },
+  {
+    id: 878,
+    category: "Open Source",
+    title: "Package Without Tests",
+    description: "Dependency has no test suite",
+    severity: "low",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Prefer packages with good test coverage",
+    checkFunction: "checkNoTests"
+  },
+  {
+    id: 879,
+    category: "Open Source",
+    title: "Package Without Documentation",
+    description: "Dependency lacks proper documentation",
+    severity: "low",
+    cwe: "CWE-1059",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Well-documented packages easier to audit",
+    checkFunction: "checkNoDocs"
+  },
+  {
+    id: 880,
+    category: "Open Source",
+    title: "Package With Known Fork Issues",
+    description: "Using package involved in community fork dispute",
+    severity: "low",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Research project history, choose stable alternative",
+    checkFunction: "checkForkDispute"
+  },
+  {
+    id: 881,
+    category: "Open Source",
+    title: "Minified Code in Package",
+    description: "Package contains pre-minified code without source",
+    severity: "medium",
+    cwe: "CWE-506",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Prefer packages with readable source code",
+    checkFunction: "checkMinifiedPackage"
+  },
+  {
+    id: 882,
+    category: "Open Source",
+    title: "Package Size Unusually Large",
+    description: "Package much larger than expected",
+    severity: "low",
+    cwe: "CWE-506",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Investigate large packages for hidden content",
+    checkFunction: "checkLargePackage"
+  },
+  {
+    id: 883,
+    category: "Open Source",
+    title: "Package With Frequent Breaking Changes",
+    description: "Dependency has unstable API",
+    severity: "low",
+    cwe: "CWE-1126",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Pin versions, consider more stable alternatives",
+    checkFunction: "checkFrequentBreaking"
+  },
+  {
+    id: 884,
+    category: "Open Source",
+    title: "Native Code Without Binary Audit",
+    description: "C++ addon or native module not audited",
+    severity: "medium",
+    cwe: "CWE-494",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Audit native code or use pure JavaScript alternatives",
+    checkFunction: "checkNativeCodeAudit"
+  },
+  {
+    id: 885,
+    category: "Open Source",
+    title: "Package Requesting Unusual Permissions",
+    description: "Package requires file system or network access unexpectedly",
+    severity: "high",
+    cwe: "CWE-272",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Review package code, verify permissions necessary",
+    checkFunction: "checkUnusualPermissions"
+  },
+
+  // Monitoring & Response (86-100)
+  {
+    id: 886,
+    category: "Monitoring",
+    title: "No Dependency Vulnerability Alerts",
+    description: "Not subscribed to security advisories",
+    severity: "medium",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Enable GitHub Dependabot, Snyk, or npm advisories",
+    checkFunction: "checkVulnerabilityAlerts"
+  },
+  {
+    id: 887,
+    category: "Monitoring",
+    title: "Dependency Update PRs Ignored",
+    description: "Automated dependency update PRs not reviewed",
+    severity: "medium",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Review and merge security updates promptly",
+    checkFunction: "checkIgnoredUpdatePRs"
+  },
+  {
+    id: 888,
+    category: "Monitoring",
+    title: "No Runtime Dependency Monitoring",
+    description: "Not monitoring which packages actually loaded",
+    severity: "low",
+    cwe: "CWE-778",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Log loaded dependencies for runtime verification",
+    checkFunction: "checkRuntimeMonitoring"
+  },
+  {
+    id: 889,
+    category: "Monitoring",
+    title: "No Package Download Anomaly Detection",
+    description: "Sudden spike in package downloads not monitored",
+    severity: "low",
+    cwe: "CWE-778",
+    owasp: "A09:2021 - Security Logging Failures",
+    recommendation: "Monitor npm package stats for anomalies",
+    checkFunction: "checkDownloadAnomalies"
+  },
+  {
+    id: 890,
+    category: "Monitoring",
+    title: "No Supply Chain Attack Detection",
+    description: "No monitoring for supply chain compromises",
+    severity: "medium",
+    cwe: "CWE-1104",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Use supply chain security tools (Socket.dev, Phylum)",
+    checkFunction: "checkSupplyChainMonitoring"
+  },
+  {
+    id: 891,
+    category: "Monitoring",
+    title: "Dependency Tree Not Visualized",
+    description: "Cannot see full dependency graph",
+    severity: "low",
+    cwe: "CWE-1059",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Use npm ls or dependency visualization tools",
+    checkFunction: "checkDependencyVisualization"
+  },
+  {
+    id: 892,
+    category: "Monitoring",
+    title: "No Security Policy in Repository",
+    description: "SECURITY.md missing from repository",
+    severity: "low",
+    cwe: "CWE-1059",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Add SECURITY.md with vulnerability reporting process",
+    checkFunction: "checkSecurityPolicy"
+  },
+  {
+    id: 893,
+    category: "Monitoring",
+    title: "Vulnerability Disclosure Process Missing",
+    description: "No process for handling reported vulnerabilities",
+    severity: "medium",
+    cwe: "CWE-1008",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Establish coordinated vulnerability disclosure process",
+    checkFunction: "checkDisclosureProcess"
+  },
+  {
+    id: 894,
+    category: "Monitoring",
+    title: "No Automated Security Testing",
+    description: "SAST/DAST not run on dependencies",
+    severity: "medium",
+    cwe: "CWE-1008",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Integrate security testing in CI/CD",
+    checkFunction: "checkAutomatedSecurityTesting"
+  },
+  {
+    id: 895,
+    category: "Monitoring",
+    title: "Package Integrity Monitoring Missing",
+    description: "Not verifying package checksums after download",
+    severity: "medium",
+    cwe: "CWE-353",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Verify package integrity hashes",
+    checkFunction: "checkIntegrityMonitoring"
+  },
+  {
+    id: 896,
+    category: "Monitoring",
+    title: "No License Change Monitoring",
+    description: "Dependency license changes not tracked",
+    severity: "low",
+    cwe: "CWE-1059",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Monitor for license changes in updates",
+    checkFunction: "checkLicenseChangeMonitoring"
+  },
+  {
+    id: 897,
+    category: "Monitoring",
+    title: "Transitive Dependency Changes Not Reviewed",
+    description: "Indirect dependency updates not examined",
+    severity: "low",
+    cwe: "CWE-1104",
+    owasp: "A06:2021 - Vulnerable and Outdated Components",
+    recommendation: "Review lock file changes in PRs",
+    checkFunction: "checkTransitiveReview"
+  },
+  {
+    id: 898,
+    category: "Monitoring",
+    title: "No Dependency Firewall",
+    description: "All packages can be installed without policy enforcement",
+    severity: "medium",
+    cwe: "CWE-1188",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Use tools like Verdaccio or Artifactory with policies",
+    checkFunction: "checkDependencyFirewall"
+  },
+  {
+    id: 899,
+    category: "Monitoring",
+    title: "Breaking Changes Not Detected",
+    description: "No semantic versioning checks in CI",
+    severity: "low",
+    cwe: "CWE-1126",
+    owasp: "A04:2021 - Insecure Design",
+    recommendation: "Use semantic-release or similar tools",
+    checkFunction: "checkBreakingChangeDetection"
+  },
+  {
+    id: 900,
+    category: "Monitoring",
+    title: "No Rollback Plan for Dependencies",
+    description: "Cannot quickly revert to known-good dependency versions",
+    severity: "medium",
+    cwe: "CWE-1059",
+    owasp: "A08:2021 - Software and Data Integrity Failures",
+    recommendation: "Maintain dependency rollback procedures",
+    checkFunction: "checkDependencyRollback"
+  }
+];
+
+// Export for use in scanner
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { category9_ThirdPartyDependencies };
+}
