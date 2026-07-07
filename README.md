@@ -140,3 +140,21 @@ Inspectra is designed as a **first-line helper tool** for developers and securit
 * **"This page cannot be scanned..."**: Ensure you are on a normal HTTP/HTTPS web page. System pages and browser settings cannot be scanned due to security boundaries.
 * **Missing HTTP Headers**: If HTTP headers fail to load, reload the tab and try scanning again. Ensure the tab was fully loaded before clicking the scan button.
 * **Applying Code Changes**: If you are developing and editing Inspectra's source files, remember to click the **Reload (circular arrow)** icon on the Inspectra card in `chrome://extensions` to load the updated scripts.
+
+---
+
+## License
+
+Released under the [MIT License](LICENSE) — free to use, modify, and distribute with attribution.
+
+---
+
+<div align="center">
+
+**Built by [Anees Aleideh](https://linkedin.com/in/anees-aleideh)**
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Anees%20Aleideh-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/anees-aleideh)
+
+*If you find this useful, consider leaving a ⭐ on the repo.*
+
+</div>
